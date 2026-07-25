@@ -1,0 +1,813 @@
+openapi: 3.1.0
+info:
+  title: Unitary content classification API Authentication Items & Characteristics API
+  description: '
+
+    This API is for classifying image and video files to detect various types of potentially harmful content.
+
+
+    ## Before you start:
+
+    - You will need an API key to access this API. Please email contact@unitary.ai to obtain one.
+
+    - If using the webhooks function then a preshared secret will also be required.
+
+
+
+    ## API Authentication
+
+
+    All API requests (except to /authenticate) require a valid API token in the `Authorization` header.
+
+    To obtain an API token you should POST to /authenticate with your API key.
+
+
+    API Tokens will be valid for a period of time (default 24h) and should be re-used until they expire or are invalidated.
+
+    Please note that the /authenticate endpoint is rate-limited and excessive requests will return errors.
+
+
+    ## Submitting media for classification
+
+
+    Unitary''s API accepts files for the image/video endpoints and free text on the detoxify endpoint.
+
+    The files or texts are submitted to the aforementioned endpoints for asynchronous classification returning a `job_id`
+
+    associated with each request.
+
+
+    Media files can either be sent as multi-part form uploads, or preferably by including a `url` field in the request where the media file can be downloaded from. Presigned object-storage URLs are supported.
+
+
+    ### Current limitations
+
+    To ensure high quality and speed in our responses, we have a few limitations on the size and type of media we process. Please let us know if any of these limitations represent an issue for you. We are more than happy to reevaluate our solution to meet your needs.
+
+    - The maximum allowed image size is 10 MB The maximum allowed video size is 200 MB. Requests made with media files larger than the limits specified may not be processed.
+
+    - The image formats we support are .png and .jpeg
+
+    - The video formats we support are .Mp4, Mpeg, Webm, Mov, Mkv, M4v
+
+
+    ## Receiving classification results
+
+
+    For receiving results we support multiple methods:
+
+
+    - The preferred method is to utilise the webhook function by including a `callback_url` parameter in the classification request. Results will be delivered by a POST request to the `callback_url` as soon as the resource is classified.
+
+    - Results can also be retrieved by polling the GET endpoints. This method may be inconvenient as processing can take multiple hours.
+
+
+    '
+  version: 1.0.0
+tags:
+- name: Items & Characteristics
+paths:
+  /classify/items-characteristics/image:
+    post:
+      tags:
+      - Items & Characteristics
+      summary: Queue an image for Items & Characteristics classification
+      description: 'This endpoint queues a job that predicts the Items & Characteristics categories of a single image.
+
+
+        The request must contain either a file (a multi-part form encoded image file) or a `url` form field (a string containing a URL to download the image file from).
+
+
+        Example CURL:
+
+        ```
+
+        curl --location --request POST https://api.unitary.ai/v1/classify/items-characteristics/image --header "Authorization: Bearer {API_TOKEN}" --header "Content-Type: multipart/form-data" --form "url={RESOURCE_URL}"
+
+        ```
+
+
+        A job ID will be returned in the response.
+
+
+        If a `callback_url` form field is included in the request then the results webhook will be sent as a POST request to this URL once the image has been classified.
+
+
+        Alternatively results can be obtained by making a GET request to the results endpoint using the job ID.
+
+
+        **Webhooks should be implemented for any use of this endpoint at scale to prevent unnecessary polling of the results endpoint.**'
+      operationId: image_items_characteristics_classify_classify_items_characteristics_image_post
+      requestBody:
+        content:
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/Body_image_items_characteristics_classify_classify_items_characteristics_image_post'
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/JobIDResponse'
+        '404':
+          description: Not found
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+      security:
+      - JWTBearer: []
+  /classify/items-characteristics/image/{job_id}:
+    get:
+      tags:
+      - Items & Characteristics
+      summary: Retrieve the results of a queued Items & Characteristics classification
+      description: 'This endpoint returns the results of a previously queued classify job.
+
+
+        The response for each item is a prevalence score between 0 and 1 that represents how present it is in the content. 1 is highest prevalence and 0 is lowest prevalence.
+
+
+        You can use these scores in mappings or models to implement safety policies, for example setting a numerical threshold for automated flagging of content or in a linear regression model.
+
+
+        Note that the score meaning and distribution is different for each item: for example, a 0.7 for `pepe` won''t translate to the same likelihood of harmful content as a 0.7 for `confederate flag`.
+
+        Therefore you should calculate an individual threshold for each item. For best performance, we suggest calculating a threshold using labelled data, optimising for the balance of precision and
+
+        recall best suited to your needs. The Unitary team is happy to provide guidance on this process.'
+      operationId: image_items_characteristics_results_classify_items_characteristics_image__job_id__get
+      parameters:
+      - required: true
+        schema:
+          type: string
+          format: uuid4
+          title: Job Id
+        name: job_id
+        in: path
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AsyncResponse_ItemsCharacteristicsResponse_'
+        '404':
+          description: Not found
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+      security:
+      - JWTBearer: []
+  /classify/items-characteristics/video:
+    post:
+      tags:
+      - Items & Characteristics
+      summary: Queue a video for Items & Characteristics classification
+      description: 'This endpoint queues a job that predicts the Items & Characteristics categories of a single video.
+
+
+        The request must contain either a file (a multi-part form encoded video file) or a `url` form field (a string containing a URL to download the video file from).
+
+
+        Example CURL:
+
+        ```
+
+        curl --location --request POST https://api.unitary.ai/v1/classify/items-characteristics/video --header "Authorization: Bearer {API_TOKEN}" --header "Content-Type: multipart/form-data" --form "url={RESOURCE_URL}"
+
+        ```
+
+
+        A job ID will be returned in the response.
+
+
+        If a `callback_url` form field is included in the request then the results webhook will be sent as a POST request to this URL once the image has been classified.
+
+
+        Alternatively results can be obtained by making a GET request to the results endpoint using the job ID.
+
+
+        **Webhooks should be implemented for any use of this endpoint at scale to prevent unnecessary polling of the results endpoint.**'
+      operationId: video_items_characteristics_classify_classify_items_characteristics_video_post
+      requestBody:
+        content:
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/Body_video_items_characteristics_classify_classify_items_characteristics_video_post'
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/JobIDResponse'
+        '404':
+          description: Not found
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+      security:
+      - JWTBearer: []
+  /classify/items-characteristics/video/{job_id}:
+    get:
+      tags:
+      - Items & Characteristics
+      summary: Retrieve the results of a queued Items & Characteristics classification
+      description: 'This endpoint returns the results of a previously queued classify job.
+
+
+        The response for each item is a prevalence score between 0 and 1 that represents how present it is in the content. 1 is highest prevalence and 0 is lowest prevalence.
+
+
+        You can use these scores in mappings or models to implement safety policies, for example setting a numerical threshold for automated flagging of content or in a linear regression model.
+
+
+        Note that the score meaning and distribution is different for each item: for example, a 0.7 for `pepe` won''t translate to the same likelihood of harmful content as a 0.7 for `confederate flag`.
+
+        Therefore you should calculate an individual threshold for each item. For best performance, we suggest calculating a threshold using labelled data, optimising for the balance of precision and
+
+        recall best suited to your needs. The Unitary team is happy to provide guidance on this process.'
+      operationId: video_items_characteristics_results_classify_items_characteristics_video__job_id__get
+      parameters:
+      - required: true
+        schema:
+          type: string
+          format: uuid4
+          title: Job Id
+        name: job_id
+        in: path
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AsyncResponse_VideoItemsCharacteristicsResponse_'
+        '404':
+          description: Not found
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+      security:
+      - JWTBearer: []
+components:
+  schemas:
+    FullViolenceCategory:
+      properties:
+        violence:
+          type: number
+          title: Violence
+          example: 0.54324
+        firearm:
+          type: number
+          title: Firearm
+          example: 0.54324
+        knife:
+          type: number
+          title: Knife
+          example: 0.54324
+        violent_knife:
+          type: number
+          title: Violent Knife
+          example: 0.54324
+      type: object
+      required:
+      - violence
+      - firearm
+      - knife
+      - violent_knife
+      title: FullViolenceCategory
+    FullOtherCategory:
+      properties:
+        child:
+          type: number
+          title: Child
+          example: 0.54324
+        middle_finger_gesture:
+          type: number
+          title: Middle Finger Gesture
+          example: 0.54324
+        toy:
+          type: number
+          title: Toy
+          example: 0.54324
+        gambling_machine:
+          type: number
+          title: Gambling Machine
+          example: 0.54324
+        face_f:
+          type: number
+          title: Face F
+          example: 0.54324
+        face_m:
+          type: number
+          title: Face M
+          example: 0.54324
+      type: object
+      required:
+      - child
+      - middle_finger_gesture
+      - toy
+      - gambling_machine
+      title: FullOtherCategory
+    HTTPValidationError:
+      properties:
+        detail:
+          items:
+            $ref: '#/components/schemas/ValidationError'
+          type: array
+          title: Detail
+      type: object
+      title: HTTPValidationError
+    JobIDResponse:
+      properties:
+        job_id:
+          type: string
+          format: uuid4
+          title: Job Id
+      type: object
+      required:
+      - job_id
+      title: JobIDResponse
+    VideoItemsCharacteristicsResponse:
+      properties:
+        violence:
+          $ref: '#/components/schemas/FullViolenceCategory'
+        substances:
+          $ref: '#/components/schemas/FullSubstancesCategory'
+        nsfw:
+          $ref: '#/components/schemas/FullNSFWCategory'
+        hate_symbols:
+          $ref: '#/components/schemas/FullHateSymbols'
+        ocr_language_toxicity:
+          $ref: '#/components/schemas/LanguageToxicityCategory'
+        audio_language_toxicity:
+          $ref: '#/components/schemas/LanguageToxicityCategory'
+        caption_language_toxicity:
+          $ref: '#/components/schemas/LanguageToxicityCategory'
+        visual_content:
+          $ref: '#/components/schemas/FullVisualContentCategory'
+        other:
+          $ref: '#/components/schemas/FullOtherCategory'
+        ocr_texts:
+          items:
+            type: string
+          type: array
+          title: Ocr Texts
+        audio_texts:
+          items:
+            type: string
+          type: array
+          title: Audio Texts
+        url:
+          type: string
+          maxLength: 65536
+          minLength: 1
+          format: uri
+          title: Url
+        metadata:
+          $ref: '#/components/schemas/VideoMetadata'
+      type: object
+      required:
+      - violence
+      - substances
+      - nsfw
+      - hate_symbols
+      - visual_content
+      - other
+      title: VideoItemsCharacteristicsResponse
+    Body_image_items_characteristics_classify_classify_items_characteristics_image_post:
+      properties:
+        callback_url:
+          type: string
+          maxLength: 2083
+          minLength: 1
+          format: uri
+          title: Webhooks callback URL
+        caption:
+          type: string
+          title: Caption
+        file:
+          type: string
+          format: binary
+          title: File
+        url:
+          type: string
+          maxLength: 65536
+          minLength: 1
+          format: uri
+          title: Url
+      type: object
+      title: Body_image_items_characteristics_classify_classify_items_characteristics_image_post
+    AsyncResponse_VideoItemsCharacteristicsResponse_:
+      properties:
+        status:
+          allOf:
+          - $ref: '#/components/schemas/AsyncResponseStatus'
+          title: Status of classification job
+        results:
+          allOf:
+          - $ref: '#/components/schemas/VideoItemsCharacteristicsResponse'
+          title: Classification results
+        msg:
+          type: string
+          title: Error details
+      type: object
+      required:
+      - status
+      title: AsyncResponse[VideoItemsCharacteristicsResponse]
+    LanguageToxicityCategory:
+      properties:
+        toxicity:
+          type: number
+          title: Toxicity
+          example: 0.54324
+        severe_toxicity:
+          type: number
+          title: Severe Toxicity
+          example: 0.54324
+        obscene:
+          type: number
+          title: Obscene
+          example: 0.54324
+        insult:
+          type: number
+          title: Insult
+          example: 0.54324
+        identity_attack:
+          type: number
+          title: Identity Attack
+          example: 0.54324
+        threat:
+          type: number
+          title: Threat
+          example: 0.54324
+        sexual_explicit:
+          type: number
+          title: Sexual Explicit
+          example: 0.54324
+      type: object
+      required:
+      - toxicity
+      - severe_toxicity
+      - obscene
+      - insult
+      - identity_attack
+      - threat
+      - sexual_explicit
+      title: LanguageToxicityCategory
+    AsyncResponseStatus:
+      enum:
+      - done
+      - failed
+      - queued
+      title: AsyncResponseStatus
+      description: An enumeration.
+    AsyncResponse_ItemsCharacteristicsResponse_:
+      properties:
+        status:
+          allOf:
+          - $ref: '#/components/schemas/AsyncResponseStatus'
+          title: Status of classification job
+        results:
+          allOf:
+          - $ref: '#/components/schemas/ItemsCharacteristicsResponse'
+          title: Classification results
+        msg:
+          type: string
+          title: Error details
+      type: object
+      required:
+      - status
+      title: AsyncResponse[ItemsCharacteristicsResponse]
+    FullVisualContentCategory:
+      properties:
+        artistic:
+          type: number
+          title: Artistic
+          example: 0.54324
+        comic:
+          type: number
+          title: Comic
+          example: 0.54324
+        meme:
+          type: number
+          title: Meme
+          example: 0.54324
+        screenshot:
+          type: number
+          title: Screenshot
+          example: 0.54324
+        map:
+          type: number
+          title: Map
+          example: 0.54324
+        poster_cover:
+          type: number
+          title: Poster Cover
+          example: 0.54324
+        game_screenshot:
+          type: number
+          title: Game Screenshot
+          example: 0.54324
+        face_filter:
+          type: number
+          title: Face Filter
+          example: 0.54324
+        promo_info_graphic:
+          type: number
+          title: Promo Info Graphic
+          example: 0.54324
+        photo:
+          type: number
+          title: Photo
+          example: 0.54324
+      type: object
+      required:
+      - artistic
+      - comic
+      - meme
+      - screenshot
+      - map
+      - poster_cover
+      - game_screenshot
+      - face_filter
+      - promo_info_graphic
+      - photo
+      title: FullVisualContentCategory
+    ItemsCharacteristicsResponse:
+      properties:
+        violence:
+          $ref: '#/components/schemas/FullViolenceCategory'
+        substances:
+          $ref: '#/components/schemas/FullSubstancesCategory'
+        nsfw:
+          $ref: '#/components/schemas/FullNSFWCategory'
+        hate_symbols:
+          $ref: '#/components/schemas/FullHateSymbols'
+        ocr_language_toxicity:
+          $ref: '#/components/schemas/LanguageToxicityCategory'
+        audio_language_toxicity:
+          $ref: '#/components/schemas/LanguageToxicityCategory'
+        caption_language_toxicity:
+          $ref: '#/components/schemas/LanguageToxicityCategory'
+        visual_content:
+          $ref: '#/components/schemas/FullVisualContentCategory'
+        other:
+          $ref: '#/components/schemas/FullOtherCategory'
+        ocr_texts:
+          items:
+            type: string
+          type: array
+          title: Ocr Texts
+        audio_texts:
+          items:
+            type: string
+          type: array
+          title: Audio Texts
+        url:
+          type: string
+          maxLength: 65536
+          minLength: 1
+          format: uri
+          title: Url
+      type: object
+      required:
+      - violence
+      - substances
+      - nsfw
+      - hate_symbols
+      - visual_content
+      - other
+      title: ItemsCharacteristicsResponse
+    Body_video_items_characteristics_classify_classify_items_characteristics_video_post:
+      properties:
+        callback_url:
+          type: string
+          maxLength: 2083
+          minLength: 1
+          format: uri
+          title: Webhooks callback URL
+        caption:
+          type: string
+          title: Caption
+        file:
+          type: string
+          format: binary
+          title: File
+        url:
+          type: string
+          maxLength: 65536
+          minLength: 1
+          format: uri
+          title: Url
+      type: object
+      title: Body_video_items_characteristics_classify_classify_items_characteristics_video_post
+    FullSubstancesCategory:
+      properties:
+        alcohol:
+          type: number
+          title: Alcohol
+          example: 0.54324
+        drink:
+          type: number
+          title: Drink
+          example: 0.54324
+        smoking_and_tobacco:
+          type: number
+          title: Smoking And Tobacco
+          example: 0.54324
+        marijuana:
+          type: number
+          title: Marijuana
+          example: 0.54324
+        pills:
+          type: number
+          title: Pills
+          example: 0.54324
+        recreational_pills:
+          type: number
+          title: Recreational Pills
+          example: 0.54324
+      type: object
+      required:
+      - alcohol
+      - drink
+      - smoking_and_tobacco
+      - marijuana
+      - pills
+      - recreational_pills
+      title: FullSubstancesCategory
+    FullNSFWCategory:
+      properties:
+        adult_content:
+          type: number
+          title: Adult Content
+          example: 0.54324
+        suggestive:
+          type: number
+          title: Suggestive
+          example: 0.54324
+        adult_toys:
+          type: number
+          title: Adult Toys
+          example: 0.54324
+        medical:
+          type: number
+          title: Medical
+          example: 0.54324
+        over_18:
+          type: number
+          title: Over 18
+          example: 0.54324
+        exposed_anus:
+          type: number
+          title: Exposed Anus
+          example: 0.54324
+        exposed_armpits:
+          type: number
+          title: Exposed Armpits
+          example: 0.54324
+        exposed_belly:
+          type: number
+          title: Exposed Belly
+          example: 0.54324
+        covered_belly:
+          type: number
+          title: Covered Belly
+          example: 0.54324
+        covered_buttocks:
+          type: number
+          title: Covered Buttocks
+          example: 0.54324
+        exposed_buttocks:
+          type: number
+          title: Exposed Buttocks
+          example: 0.54324
+        covered_feet:
+          type: number
+          title: Covered Feet
+          example: 0.54324
+        exposed_feet:
+          type: number
+          title: Exposed Feet
+          example: 0.54324
+        covered_breast_f:
+          type: number
+          title: Covered Breast F
+          example: 0.54324
+        exposed_breast_f:
+          type: number
+          title: Exposed Breast F
+          example: 0.54324
+        covered_genitalia_f:
+          type: number
+          title: Covered Genitalia F
+          example: 0.54324
+        exposed_genitalia_f:
+          type: number
+          title: Exposed Genitalia F
+          example: 0.54324
+        exposed_breast_m:
+          type: number
+          title: Exposed Breast M
+          example: 0.54324
+        exposed_genitalia_m:
+          type: number
+          title: Exposed Genitalia M
+          example: 0.54324
+      type: object
+      required:
+      - adult_content
+      - suggestive
+      title: FullNSFWCategory
+    FullHateSymbols:
+      properties:
+        confederate_flag:
+          type: number
+          title: Confederate Flag
+          example: 0.54324
+        pepe_frog:
+          type: number
+          title: Pepe Frog
+          example: 0.54324
+        nazi_swastika:
+          type: number
+          title: Nazi Swastika
+          example: 0.54324
+      type: object
+      required:
+      - confederate_flag
+      - pepe_frog
+      - nazi_swastika
+      title: FullHateSymbols
+    ValidationError:
+      properties:
+        loc:
+          items:
+            anyOf:
+            - type: string
+            - type: integer
+          type: array
+          title: Location
+        msg:
+          type: string
+          title: Message
+        type:
+          type: string
+          title: Error Type
+      type: object
+      required:
+      - loc
+      - msg
+      - type
+      title: ValidationError
+    VideoMetadata:
+      properties:
+        width:
+          type: integer
+          exclusiveMinimum: 0.0
+          title: Video width (pixels)
+        height:
+          type: integer
+          exclusiveMinimum: 0.0
+          title: Video height (pixels)
+        fps:
+          type: number
+          exclusiveMinimum: 0.0
+          title: Video average framerate
+        duration:
+          type: number
+          exclusiveMinimum: 0.0
+          title: Video duration (seconds)
+        seconds_processed:
+          type: number
+          minimum: 0.0
+          title: Number of seconds processed
+          description: The number of seconds of video processed to obtain results
+      type: object
+      required:
+      - width
+      - height
+      - fps
+      - duration
+      - seconds_processed
+      title: VideoMetadata
+  securitySchemes:
+    JWTBearer:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT

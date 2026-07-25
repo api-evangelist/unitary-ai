@@ -1,0 +1,172 @@
+openapi: 3.1.0
+info:
+  title: Unitary content classification API Authentication API
+  description: '
+
+    This API is for classifying image and video files to detect various types of potentially harmful content.
+
+
+    ## Before you start:
+
+    - You will need an API key to access this API. Please email contact@unitary.ai to obtain one.
+
+    - If using the webhooks function then a preshared secret will also be required.
+
+
+
+    ## API Authentication
+
+
+    All API requests (except to /authenticate) require a valid API token in the `Authorization` header.
+
+    To obtain an API token you should POST to /authenticate with your API key.
+
+
+    API Tokens will be valid for a period of time (default 24h) and should be re-used until they expire or are invalidated.
+
+    Please note that the /authenticate endpoint is rate-limited and excessive requests will return errors.
+
+
+    ## Submitting media for classification
+
+
+    Unitary''s API accepts files for the image/video endpoints and free text on the detoxify endpoint.
+
+    The files or texts are submitted to the aforementioned endpoints for asynchronous classification returning a `job_id`
+
+    associated with each request.
+
+
+    Media files can either be sent as multi-part form uploads, or preferably by including a `url` field in the request where the media file can be downloaded from. Presigned object-storage URLs are supported.
+
+
+    ### Current limitations
+
+    To ensure high quality and speed in our responses, we have a few limitations on the size and type of media we process. Please let us know if any of these limitations represent an issue for you. We are more than happy to reevaluate our solution to meet your needs.
+
+    - The maximum allowed image size is 10 MB The maximum allowed video size is 200 MB. Requests made with media files larger than the limits specified may not be processed.
+
+    - The image formats we support are .png and .jpeg
+
+    - The video formats we support are .Mp4, Mpeg, Webm, Mov, Mkv, M4v
+
+
+    ## Receiving classification results
+
+
+    For receiving results we support multiple methods:
+
+
+    - The preferred method is to utilise the webhook function by including a `callback_url` parameter in the classification request. Results will be delivered by a POST request to the `callback_url` as soon as the resource is classified.
+
+    - Results can also be retrieved by polling the GET endpoints. This method may be inconvenient as processing can take multiple hours.
+
+
+    '
+  version: 1.0.0
+tags:
+- name: API Authentication
+paths:
+  /authenticate:
+    post:
+      tags:
+      - API Authentication
+      summary: Authenticate with API Key to obtain an API token
+      description: 'Clients wishing to interact with the Unitary API must first authenticate by calling this endpoint with a valid API Key in the request body.
+
+
+        The resulting `api_token` should be used in subsequent API requests by including a header with the format:
+
+        ```
+
+        Authorization: Bearer {api_token}
+
+        ```
+
+
+        The `api_token` will be valid for a period of time (default 24 hours) and should be used for all subsequent API requests until it expires, or is invalidated.
+
+
+        **This endpoint is rate-limited and may return error codes if too many authentication requests are submitted within a short time frame. For this reason clients should avoid re-authenticating too often.**'
+      operationId: authenticate_authenticate_post
+      requestBody:
+        content:
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/Body_authenticate_authenticate_post'
+        required: true
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/LoginResponse'
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+components:
+  schemas:
+    HTTPValidationError:
+      properties:
+        detail:
+          items:
+            $ref: '#/components/schemas/ValidationError'
+          type: array
+          title: Detail
+      type: object
+      title: HTTPValidationError
+    ValidationError:
+      properties:
+        loc:
+          items:
+            anyOf:
+            - type: string
+            - type: integer
+          type: array
+          title: Location
+        msg:
+          type: string
+          title: Message
+        type:
+          type: string
+          title: Error Type
+      type: object
+      required:
+      - loc
+      - msg
+      - type
+      title: ValidationError
+    LoginResponse:
+      properties:
+        api_token:
+          type: string
+          title: Api Token
+        expiry:
+          type: string
+          format: date-time
+          title: Expiry
+      type: object
+      required:
+      - api_token
+      - expiry
+      title: LoginResponse
+    Body_authenticate_authenticate_post:
+      properties:
+        key:
+          type: string
+          format: password
+          title: Key
+          writeOnly: true
+      type: object
+      required:
+      - key
+      title: Body_authenticate_authenticate_post
+  securitySchemes:
+    JWTBearer:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT

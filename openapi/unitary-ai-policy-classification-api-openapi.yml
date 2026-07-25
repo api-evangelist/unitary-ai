@@ -1,0 +1,607 @@
+openapi: 3.1.0
+info:
+  title: Unitary content classification API Authentication Policy Classification API
+  description: '
+
+    This API is for classifying image and video files to detect various types of potentially harmful content.
+
+
+    ## Before you start:
+
+    - You will need an API key to access this API. Please email contact@unitary.ai to obtain one.
+
+    - If using the webhooks function then a preshared secret will also be required.
+
+
+
+    ## API Authentication
+
+
+    All API requests (except to /authenticate) require a valid API token in the `Authorization` header.
+
+    To obtain an API token you should POST to /authenticate with your API key.
+
+
+    API Tokens will be valid for a period of time (default 24h) and should be re-used until they expire or are invalidated.
+
+    Please note that the /authenticate endpoint is rate-limited and excessive requests will return errors.
+
+
+    ## Submitting media for classification
+
+
+    Unitary''s API accepts files for the image/video endpoints and free text on the detoxify endpoint.
+
+    The files or texts are submitted to the aforementioned endpoints for asynchronous classification returning a `job_id`
+
+    associated with each request.
+
+
+    Media files can either be sent as multi-part form uploads, or preferably by including a `url` field in the request where the media file can be downloaded from. Presigned object-storage URLs are supported.
+
+
+    ### Current limitations
+
+    To ensure high quality and speed in our responses, we have a few limitations on the size and type of media we process. Please let us know if any of these limitations represent an issue for you. We are more than happy to reevaluate our solution to meet your needs.
+
+    - The maximum allowed image size is 10 MB The maximum allowed video size is 200 MB. Requests made with media files larger than the limits specified may not be processed.
+
+    - The image formats we support are .png and .jpeg
+
+    - The video formats we support are .Mp4, Mpeg, Webm, Mov, Mkv, M4v
+
+
+    ## Receiving classification results
+
+
+    For receiving results we support multiple methods:
+
+
+    - The preferred method is to utilise the webhook function by including a `callback_url` parameter in the classification request. Results will be delivered by a POST request to the `callback_url` as soon as the resource is classified.
+
+    - Results can also be retrieved by polling the GET endpoints. This method may be inconvenient as processing can take multiple hours.
+
+
+    '
+  version: 1.0.0
+tags:
+- name: Policy Classification
+paths:
+  /classify/policy/image/now:
+    post:
+      tags:
+      - Policy Classification
+      summary: Submit an image for immediate Policy classification
+      description: 'This endpoint predicts the policy categories of a single image.
+
+
+        The request must contain a `url` form field (a string containing a URL to download the image file from).
+
+
+        Example CURL:
+
+        ```
+
+        curl --location --request POST "https://api.unitary.ai/v1/classify/policy/image/now" --header "Authorization: Bearer {API_TOKEN}" --header "Content-Type: multipart/form-data" --form "url={RESOURCE_URL}"
+
+        ```'
+      operationId: image_classify_policy_now_classify_policy_image_now_post
+      requestBody:
+        content:
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/Body_image_classify_policy_now_classify_policy_image_now_post'
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PolicyClassificationResponse'
+        '404':
+          description: Not found
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+      security:
+      - JWTBearer: []
+  /classify/policy/image:
+    post:
+      tags:
+      - Policy Classification
+      summary: Queue an image for Policy classification
+      description: 'This endpoint predicts the policy categories of a single image.
+
+
+        The request must contain a `url` form field (a string containing a URL to download the image file from).
+
+
+        Example CURL:
+
+        ```
+
+        curl --location --request POST "https://api.unitary.ai/v1/classify/policy/image" --header "Authorization: Bearer {API_TOKEN}" --header "Content-Type: multipart/form-data" --form "url={RESOURCE_URL}"
+
+        ```'
+      operationId: image_policy_classify_classify_policy_image_post
+      requestBody:
+        content:
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/Body_image_policy_classify_classify_policy_image_post'
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/JobIDResponse'
+        '404':
+          description: Not found
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+      security:
+      - JWTBearer: []
+  /classify/policy/image/{job_id}:
+    get:
+      tags:
+      - Policy Classification
+      summary: Retrieve the results of a queued Policy classification job
+      operationId: image_policy_classification_results_classify_policy_image__job_id__get
+      parameters:
+      - required: true
+        schema:
+          type: string
+          format: uuid4
+          title: Job Id
+        name: job_id
+        in: path
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AsyncResponse_PolicyClassificationResponse_'
+        '404':
+          description: Not found
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+      security:
+      - JWTBearer: []
+  /classify/policy/video/now:
+    post:
+      tags:
+      - Policy Classification
+      summary: Submit a video for immediate Policy classification
+      description: 'This endpoint predicts the policy categories of a single video.
+
+
+        The request must contain a `url` form field (a string containing a URL to download the video file from).
+
+
+        Example CURL:
+
+        ```
+
+        curl --location --request POST "https://api.unitary.ai/v1/classify/policy/video/now" --header "Authorization: Bearer {API_TOKEN}" --header "Content-Type: multipart/form-data" --form "url={RESOURCE_URL}"
+
+        ```'
+      operationId: video_classify_policy_now_classify_policy_video_now_post
+      requestBody:
+        content:
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/Body_video_classify_policy_now_classify_policy_video_now_post'
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/VideoPolicyClassificationResponse'
+        '404':
+          description: Not found
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+      security:
+      - JWTBearer: []
+  /classify/policy/video:
+    post:
+      tags:
+      - Policy Classification
+      summary: Queue a video for Policy classification
+      description: 'This endpoint predicts the policy categories of a single video.
+
+
+        The request must contain a `url` form field (a string containing a URL to download the video file from).
+
+
+        Example CURL:
+
+        ```
+
+        curl --location --request POST "https://api.unitary.ai/v1/classify/policy/video" --header "Authorization: Bearer {API_TOKEN}" --header "Content-Type: multipart/form-data" --form "url={RESOURCE_URL}"
+
+        ```'
+      operationId: video_policy_classify_classify_policy_video_post
+      requestBody:
+        content:
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/Body_video_policy_classify_classify_policy_video_post'
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/JobIDResponse'
+        '404':
+          description: Not found
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+      security:
+      - JWTBearer: []
+  /classify/policy/video/{job_id}:
+    get:
+      tags:
+      - Policy Classification
+      summary: Retrieve the results of a queued Policy classification job
+      operationId: video_policy_classification_results_classify_policy_video__job_id__get
+      parameters:
+      - required: true
+        schema:
+          type: string
+          format: uuid4
+          title: Job Id
+        name: job_id
+        in: path
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AsyncResponse_VideoPolicyClassificationResponse_'
+        '404':
+          description: Not found
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+      security:
+      - JWTBearer: []
+components:
+  schemas:
+    PolicyCategoryFull:
+      properties:
+        name:
+          type: string
+          title: Policy category name
+        description:
+          type: string
+          title: Policy category description
+        risk_level:
+          type: string
+          title: Policy risk level
+        score:
+          type: number
+          title: Policy classification score
+      type: object
+      required:
+      - name
+      - description
+      - risk_level
+      title: PolicyCategoryFull
+      example:
+        name: ARMS_AMMO
+        description: Arms & Ammunition
+        risk_level: high
+        score: 0.8
+    JobIDResponse:
+      properties:
+        job_id:
+          type: string
+          format: uuid4
+          title: Job Id
+      type: object
+      required:
+      - job_id
+      title: JobIDResponse
+    HTTPValidationError:
+      properties:
+        detail:
+          items:
+            $ref: '#/components/schemas/ValidationError'
+          type: array
+          title: Detail
+      type: object
+      title: HTTPValidationError
+    PolicyCategoryScores:
+      properties:
+        name:
+          type: string
+          title: Policy category name
+        description:
+          type: string
+          title: Policy category description
+        score:
+          type: number
+          title: Policy classification score
+      type: object
+      required:
+      - name
+      - description
+      title: PolicyCategoryScores
+      example:
+        name: ARMS_AMMO
+        description: Arms & Ammunition
+        score: 0.8
+    AsyncResponse_VideoPolicyClassificationResponse_:
+      properties:
+        status:
+          allOf:
+          - $ref: '#/components/schemas/AsyncResponseStatus'
+          title: Status of classification job
+        results:
+          allOf:
+          - $ref: '#/components/schemas/VideoPolicyClassificationResponse'
+          title: Classification results
+        msg:
+          type: string
+          title: Error details
+      type: object
+      required:
+      - status
+      title: AsyncResponse[VideoPolicyClassificationResponse]
+    Body_image_classify_policy_now_classify_policy_image_now_post:
+      properties:
+        callback_url:
+          type: string
+          maxLength: 2083
+          minLength: 1
+          format: uri
+          title: Webhooks callback URL
+        caption:
+          type: string
+          title: Caption
+        url:
+          type: string
+          maxLength: 65536
+          minLength: 1
+          format: uri
+          title: Url
+      type: object
+      title: Body_image_classify_policy_now_classify_policy_image_now_post
+    AsyncResponseStatus:
+      enum:
+      - done
+      - failed
+      - queued
+      title: AsyncResponseStatus
+      description: An enumeration.
+    VideoPolicyClassificationResponse:
+      properties:
+        url:
+          type: string
+          maxLength: 65536
+          minLength: 1
+          format: uri
+          title: Url
+        policy_categories:
+          anyOf:
+          - items:
+              $ref: '#/components/schemas/PolicyCategoryFull'
+            type: array
+          - items:
+              $ref: '#/components/schemas/PolicyCategoryRiskLevels'
+            type: array
+          - items:
+              $ref: '#/components/schemas/PolicyCategoryScores'
+            type: array
+          title: Policy Categories
+        metadata:
+          $ref: '#/components/schemas/VideoMetadata'
+      type: object
+      required:
+      - policy_categories
+      title: VideoPolicyClassificationResponse
+    Body_image_policy_classify_classify_policy_image_post:
+      properties:
+        callback_url:
+          type: string
+          maxLength: 2083
+          minLength: 1
+          format: uri
+          title: Webhooks callback URL
+        caption:
+          type: string
+          title: Caption
+        url:
+          type: string
+          maxLength: 65536
+          minLength: 1
+          format: uri
+          title: Url
+      type: object
+      title: Body_image_policy_classify_classify_policy_image_post
+    Body_video_classify_policy_now_classify_policy_video_now_post:
+      properties:
+        callback_url:
+          type: string
+          maxLength: 2083
+          minLength: 1
+          format: uri
+          title: Webhooks callback URL
+        caption:
+          type: string
+          title: Caption
+        url:
+          type: string
+          maxLength: 65536
+          minLength: 1
+          format: uri
+          title: Url
+      type: object
+      title: Body_video_classify_policy_now_classify_policy_video_now_post
+    PolicyClassificationResponse:
+      properties:
+        url:
+          type: string
+          maxLength: 65536
+          minLength: 1
+          format: uri
+          title: Url
+        policy_categories:
+          anyOf:
+          - items:
+              $ref: '#/components/schemas/PolicyCategoryFull'
+            type: array
+          - items:
+              $ref: '#/components/schemas/PolicyCategoryRiskLevels'
+            type: array
+          - items:
+              $ref: '#/components/schemas/PolicyCategoryScores'
+            type: array
+          title: Policy Categories
+      type: object
+      required:
+      - policy_categories
+      title: PolicyClassificationResponse
+    Body_video_policy_classify_classify_policy_video_post:
+      properties:
+        callback_url:
+          type: string
+          maxLength: 2083
+          minLength: 1
+          format: uri
+          title: Webhooks callback URL
+        caption:
+          type: string
+          title: Caption
+        url:
+          type: string
+          maxLength: 65536
+          minLength: 1
+          format: uri
+          title: Url
+      type: object
+      title: Body_video_policy_classify_classify_policy_video_post
+    ValidationError:
+      properties:
+        loc:
+          items:
+            anyOf:
+            - type: string
+            - type: integer
+          type: array
+          title: Location
+        msg:
+          type: string
+          title: Message
+        type:
+          type: string
+          title: Error Type
+      type: object
+      required:
+      - loc
+      - msg
+      - type
+      title: ValidationError
+    AsyncResponse_PolicyClassificationResponse_:
+      properties:
+        status:
+          allOf:
+          - $ref: '#/components/schemas/AsyncResponseStatus'
+          title: Status of classification job
+        results:
+          allOf:
+          - $ref: '#/components/schemas/PolicyClassificationResponse'
+          title: Classification results
+        msg:
+          type: string
+          title: Error details
+      type: object
+      required:
+      - status
+      title: AsyncResponse[PolicyClassificationResponse]
+    PolicyCategoryRiskLevels:
+      properties:
+        name:
+          type: string
+          title: Policy category name
+        description:
+          type: string
+          title: Policy category description
+        risk_level:
+          type: string
+          title: Policy risk level
+      type: object
+      required:
+      - name
+      - description
+      - risk_level
+      title: PolicyCategoryRiskLevels
+      description: "Possible categories names are:\n\n- ADULT_CONTENT: Adult & Explicit Sexual Content\n- ARMS_AMMO: Arms & Ammunition\n- CRIME_HARMFUL_ACTS: Crime & Harmful acts to individuals and Society,\n                      Human Right Violations\n- DEATH_INJURY_MILITARY: Death, Injury or Military Conflict\n- DEBATED_SENSITIVE: Debated Sensitive Social Issue\n- DRUGS_TOBACCO_ALCOHOL: Illegal Drugs/Tobacco/e-Cigarettes/Vaping/Alcohol\n- HATE_SPEECH_AGGRESSION: Hate speech & acts of aggression\n- OBSCENITY_PROFANITY: Obscenity and Profanity, including language,\n                       gestures, and explicitly gory, graphic or repulsive\n                       content intended to shock and disgust\n- PIRACY: Online piracy\n- SPAM: Spam or Harmful Content\n- TERRORISM: Terrorism\n\nFor each detected category the risk may be:\n\n- high\n- medium\n- low"
+      example:
+        name: ARMS_AMMO
+        description: Arms & Ammunition
+        risk_level: high
+    VideoMetadata:
+      properties:
+        width:
+          type: integer
+          exclusiveMinimum: 0.0
+          title: Video width (pixels)
+        height:
+          type: integer
+          exclusiveMinimum: 0.0
+          title: Video height (pixels)
+        fps:
+          type: number
+          exclusiveMinimum: 0.0
+          title: Video average framerate
+        duration:
+          type: number
+          exclusiveMinimum: 0.0
+          title: Video duration (seconds)
+        seconds_processed:
+          type: number
+          minimum: 0.0
+          title: Number of seconds processed
+          description: The number of seconds of video processed to obtain results
+      type: object
+      required:
+      - width
+      - height
+      - fps
+      - duration
+      - seconds_processed
+      title: VideoMetadata
+  securitySchemes:
+    JWTBearer:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT

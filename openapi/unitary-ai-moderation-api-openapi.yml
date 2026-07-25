@@ -1,0 +1,410 @@
+openapi: 3.1.0
+info:
+  title: Unitary content classification API Authentication moderation API
+  description: '
+
+    This API is for classifying image and video files to detect various types of potentially harmful content.
+
+
+    ## Before you start:
+
+    - You will need an API key to access this API. Please email contact@unitary.ai to obtain one.
+
+    - If using the webhooks function then a preshared secret will also be required.
+
+
+
+    ## API Authentication
+
+
+    All API requests (except to /authenticate) require a valid API token in the `Authorization` header.
+
+    To obtain an API token you should POST to /authenticate with your API key.
+
+
+    API Tokens will be valid for a period of time (default 24h) and should be re-used until they expire or are invalidated.
+
+    Please note that the /authenticate endpoint is rate-limited and excessive requests will return errors.
+
+
+    ## Submitting media for classification
+
+
+    Unitary''s API accepts files for the image/video endpoints and free text on the detoxify endpoint.
+
+    The files or texts are submitted to the aforementioned endpoints for asynchronous classification returning a `job_id`
+
+    associated with each request.
+
+
+    Media files can either be sent as multi-part form uploads, or preferably by including a `url` field in the request where the media file can be downloaded from. Presigned object-storage URLs are supported.
+
+
+    ### Current limitations
+
+    To ensure high quality and speed in our responses, we have a few limitations on the size and type of media we process. Please let us know if any of these limitations represent an issue for you. We are more than happy to reevaluate our solution to meet your needs.
+
+    - The maximum allowed image size is 10 MB The maximum allowed video size is 200 MB. Requests made with media files larger than the limits specified may not be processed.
+
+    - The image formats we support are .png and .jpeg
+
+    - The video formats we support are .Mp4, Mpeg, Webm, Mov, Mkv, M4v
+
+
+    ## Receiving classification results
+
+
+    For receiving results we support multiple methods:
+
+
+    - The preferred method is to utilise the webhook function by including a `callback_url` parameter in the classification request. Results will be delivered by a POST request to the `callback_url` as soon as the resource is classified.
+
+    - Results can also be retrieved by polling the GET endpoints. This method may be inconvenient as processing can take multiple hours.
+
+
+    '
+  version: 1.0.0
+tags:
+- name: moderation
+paths:
+  /moderate:
+    post:
+      tags:
+      - moderation
+      summary: Moderate Content
+      operationId: moderate_content_moderate_post
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/VirtualModeratorRequest'
+        required: true
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/VirtualModeratorQueuedResponse'
+        '404':
+          description: Not found
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+      security:
+      - JWTBearer: []
+components:
+  schemas:
+    MediaMainContent:
+      properties:
+        external_id:
+          type: string
+          title: External Id
+        is_user_report:
+          type: boolean
+          title: Is User Report
+          default: false
+        value:
+          type: string
+          minLength: 1
+          format: uri
+          title: Value
+        type:
+          type: string
+          enum:
+          - image
+          - video
+          title: Type
+      additionalProperties: false
+      type: object
+      required:
+      - external_id
+      - value
+      - type
+      title: MediaMainContent
+    HTTPValidationError:
+      properties:
+        detail:
+          items:
+            $ref: '#/components/schemas/ValidationError'
+          type: array
+          title: Detail
+      type: object
+      title: HTTPValidationError
+    UserReportAttachment:
+      properties:
+        relation_to_main_media:
+          type: string
+          enum:
+          - related_link
+          - comment
+          - post
+          - chat
+          - profile
+          - post_by_same_user
+          - metadata
+          - user_report
+          title: Relation To Main Media
+          description: Defines how the attachment is related to the main media, such as being a comment, a post, or a chat
+          default: post
+        type:
+          type: string
+          enum:
+          - user_report
+          const: user_report
+          title: Type
+          default: user_report
+        value:
+          type: string
+          title: Value
+      type: object
+      required:
+      - value
+      title: UserReportAttachment
+    VirtualModeratorQueuedResponse:
+      properties:
+        moderation_job_id:
+          type: string
+          pattern: ^vmod_[0-7][0-9a-hjkmnp-tv-z]{25}$
+          title: Moderation Job Id
+          description: The moderation job ID, which has a 'vmod' prefix
+          examples:
+          - vmod_01h45ytscbebyvny4gc8cr8ma2
+        external_id:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: External Id
+          description: Optional external ID as specified in the request
+        classification_job_id:
+          anyOf:
+          - type: string
+            format: uuid
+          - type: 'null'
+          title: Classification Job Id
+          description: The job ID of the initial classification
+      additionalProperties: false
+      type: object
+      required:
+      - moderation_job_id
+      - classification_job_id
+      title: VirtualModeratorQueuedResponse
+    TextAttachment:
+      properties:
+        relation_to_main_media:
+          type: string
+          enum:
+          - related_link
+          - comment
+          - post
+          - chat
+          - profile
+          - post_by_same_user
+          - metadata
+          - user_report
+          title: Relation To Main Media
+          description: Defines how the attachment is related to the main media, such as being a comment, a post, or a chat
+          default: post
+        type:
+          type: string
+          enum:
+          - text
+          const: text
+          title: Type
+          default: text
+        mime_type:
+          type: string
+          enum:
+          - text/markdown
+          - text/plain
+          - text/html
+          title: Mime Type
+          description: MIME type of the text content
+        value:
+          type: string
+          title: Value
+          description: Text content, limited to 100 KiB
+      type: object
+      required:
+      - mime_type
+      - value
+      title: TextAttachment
+    VirtualModeratorRequest:
+      properties:
+        main_content:
+          oneOf:
+          - $ref: '#/components/schemas/MediaMainContent'
+          - $ref: '#/components/schemas/TextMainContent'
+          title: Main Content
+          discriminator:
+            propertyName: type
+            mapping:
+              image: '#/components/schemas/MediaMainContent'
+              text: '#/components/schemas/TextMainContent'
+              video: '#/components/schemas/MediaMainContent'
+        classification_job_id:
+          anyOf:
+          - type: string
+            format: uuid
+          - type: 'null'
+          title: Classification Job Id
+        attachments:
+          items:
+            oneOf:
+            - $ref: '#/components/schemas/TextAttachment'
+            - $ref: '#/components/schemas/LinkAttachment'
+            - $ref: '#/components/schemas/UserReportAttachment'
+            - $ref: '#/components/schemas/MetadataAttachment'
+            description: Attachment adding context to the main content
+            discriminator:
+              propertyName: type
+              mapping:
+                link: '#/components/schemas/LinkAttachment'
+                metadata: '#/components/schemas/MetadataAttachment'
+                text: '#/components/schemas/TextAttachment'
+                user_report: '#/components/schemas/UserReportAttachment'
+          type: array
+          title: Attachments
+        callback_url:
+          type: string
+          maxLength: 2083
+          minLength: 1
+          format: uri
+          title: Callback Url
+      additionalProperties: false
+      type: object
+      required:
+      - main_content
+      - attachments
+      - callback_url
+      title: VirtualModeratorRequest
+      description: Request received by the API worker in the HTTP POST
+    ValidationError:
+      properties:
+        loc:
+          items:
+            anyOf:
+            - type: string
+            - type: integer
+          type: array
+          title: Location
+        msg:
+          type: string
+          title: Message
+        type:
+          type: string
+          title: Error Type
+      type: object
+      required:
+      - loc
+      - msg
+      - type
+      title: ValidationError
+    TextMainContent:
+      properties:
+        external_id:
+          type: string
+          title: External Id
+        is_user_report:
+          type: boolean
+          title: Is User Report
+          default: false
+        value:
+          type: string
+          title: Value
+        type:
+          type: string
+          enum:
+          - text
+          const: text
+          title: Type
+        resource_url:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Resource Url
+      additionalProperties: false
+      type: object
+      required:
+      - external_id
+      - value
+      - type
+      title: TextMainContent
+    MetadataAttachment:
+      properties:
+        relation_to_main_media:
+          type: string
+          enum:
+          - related_link
+          - comment
+          - post
+          - chat
+          - profile
+          - post_by_same_user
+          - metadata
+          - user_report
+          title: Relation To Main Media
+          description: Defines how the attachment is related to the main media, such as being a comment, a post, or a chat
+          default: post
+        type:
+          type: string
+          enum:
+          - metadata
+          const: metadata
+          title: Type
+          default: metadata
+        value:
+          type: string
+          title: Value
+        mime_type:
+          type: string
+          enum:
+          - application/json
+          const: application/json
+          title: Mime Type
+          description: MIME type of the metadata content
+      type: object
+      required:
+      - value
+      - mime_type
+      title: MetadataAttachment
+    LinkAttachment:
+      properties:
+        relation_to_main_media:
+          type: string
+          enum:
+          - related_link
+          - comment
+          - post
+          - chat
+          - profile
+          - post_by_same_user
+          - metadata
+          - user_report
+          title: Relation To Main Media
+          description: Defines how the attachment is related to the main media, such as being a comment, a post, or a chat
+          default: post
+        type:
+          type: string
+          enum:
+          - link
+          const: link
+          title: Type
+          default: link
+        value:
+          type: string
+          minLength: 1
+          format: uri
+          title: Value
+      type: object
+      required:
+      - value
+      title: LinkAttachment
+  securitySchemes:
+    JWTBearer:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
