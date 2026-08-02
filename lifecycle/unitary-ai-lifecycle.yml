@@ -1,0 +1,22 @@
+generated: '2026-07-21'
+method: searched
+source: https://docs.unitary.ai/
+versioning:
+  scheme: uri-path
+  current: v1
+  evidence: All documented endpoints live under https://api.unitary.ai/v1/ (curl examples across the docs)
+deprecation:
+  policy_url: null
+  sunset_header: false
+  notes: No published deprecation policy or RFC 8594 Sunset header support found in the docs.
+sla:
+  url: null
+  notes: >-
+    No formal SLA published. The docs state API response times vary between
+    sub-second and 24 hours depending on endpoint/tier, and that different
+    response times can be negotiated (https://docs.unitary.ai/api-references/features-and-requirements).
+status_page: null
+deprecated_operations: []
+token_lifecycle:
+  api_token_ttl: 24h
+  notes: Bearer api_token from POST /authenticate is valid ~24 hours and should be re-used until expiry; /authenticate is rate-limited.

@@ -1,0 +1,24 @@
+generated: '2026-07-21'
+method: searched
+source: https://docs.unitary.ai/api-references/integrating_webhooks
+spec_type: Webhooks
+notes: >-
+  Unitary documents a webhook result-delivery surface but publishes no AsyncAPI
+  document. Whenever an asynchronous classification job finishes, Unitary POSTs
+  the result to the callback_url provided in the original API request. This file
+  captures the documented webhook catalog; no channels/events are invented.
+delivery:
+  method: POST
+  target: the callback_url parameter supplied in the classification request body
+  custom_data: query parameters appended to callback_url are preserved and echoed in the payload
+  source_ips: https://docs.unitary.ai/unitary-source-ips (US region 16 IPs, EU region 3 IPs)
+security:
+  signature_header: X-Hub-Signature-256
+  algorithm: HMAC-SHA256 over the raw payload body, base64-encoded
+  secret: preshared secret issued by Unitary alongside the API key; header omitted when no secret is configured
+webhooks:
+  - name: classification-job-result
+    description: Delivered when an asynchronous classification job (policy, items and characteristics, or detoxify) finishes processing
+    payload:
+      success: '{data: {job_id, callback_url, is_error: false, result: {policy_categories: [{name, description, risk_level}], metadata: {width, height, fps, duration, seconds_processed}, url}}}'
+      error: '{data: {job_id, callback_url, is_error: true, result: {error: "<message>"}}}'

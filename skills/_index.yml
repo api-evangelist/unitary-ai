@@ -1,0 +1,24 @@
+generated: '2026-07-21'
+method: generated
+source: openapi/unitary-ai-content-classification-openapi-original.yaml
+skills:
+  - file: unitary-ai-classify-video-policy.md
+    name: Classify a video against content policy
+    api: openapi/unitary-ai-content-classification-openapi-original.yaml
+    operations:
+      - authenticate_authenticate_post
+      - video_policy_classify_classify_policy_video_post
+      - video_policy_classification_results_classify_policy_video__job_id__get
+  - file: unitary-ai-detoxify-text.md
+    name: Detect toxic language in text
+    api: openapi/unitary-ai-content-classification-openapi-original.yaml
+    operations:
+      - authenticate_authenticate_post
+      - text_detoxify_classify_detoxify_text__post
+      - text_results_detoxify_text__job_id__get
+  - file: unitary-ai-virtual-moderator.md
+    name: Moderate content with a Virtual Trust and Safety Agent
+    api: openapi/unitary-ai-content-classification-openapi-original.yaml
+    operations:
+      - authenticate_authenticate_post
+      - moderate_content_moderate_post

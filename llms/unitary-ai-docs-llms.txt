@@ -1,0 +1,32 @@
+# Documentation
+
+## Documentation
+
+- [Step-by-step instructions](https://docs.unitary.ai/get-started/readme.md)
+- [Features and requirements](https://docs.unitary.ai/api-references/features-and-requirements.md)
+- [API Authentication](https://docs.unitary.ai/api-references/authentication.md)
+- [Standard & Premium: Policy Classification endpoints](https://docs.unitary.ai/api-references/policy-classification.md)
+- [Add-on: synchronous endpoints](https://docs.unitary.ai/api-references/policy-classification/add-on-synchronous-endpoints.md)
+- [Virtual Moderator endpoint](https://docs.unitary.ai/api-references/virtual-moderator-endpoint.md)
+- [Items and Characteristics endpoints](https://docs.unitary.ai/api-references/items-and-characteristics.md)
+- [List of Item and Characteristics](https://docs.unitary.ai/api-references/items-and-characteristics/list-of-i-and-c-classes.md)
+- [Detoxify endpoints](https://docs.unitary.ai/api-references/detoxify.md)
+- [How to select thresholds](https://docs.unitary.ai/api-references/how-to-select-thresholds-for-items-and-characteristics.md)
+- [Integrating Webhooks](https://docs.unitary.ai/api-references/integrating_webhooks.md)
+- [Unitary Source IPs](https://docs.unitary.ai/unitary-source-ips.md)
+
+
+---
+
+# Agent Instructions
+This documentation is published with GitBook. GitBook is the documentation platform designed so that both humans and AI agents can read, navigate, and reason over technical content effectively. Learn more at gitbook.com.
+
+## Querying This Documentation
+If you need additional information, you can query the documentation dynamically by asking a question.
+Perform an HTTP GET request on a page URL with the `ask` query parameter:
+```
+GET https://docs.unitary.ai/get-started/readme.md?ask=<question>
+```
+The question should be specific, self-contained, and written in natural language.
+The response will contain a direct answer to the question and relevant excerpts and sources from the documentation.
+Use this mechanism when the answer is not explicitly present in the current page, you need clarification or additional context, or you want to retrieve related documentation sections.

@@ -1,0 +1,1865 @@
+openapi: 3.1.0
+info:
+  title: Unitary content classification API
+  description: '
+
+    This API is for classifying image and video files to detect various types of potentially
+    harmful content.
+
+
+    ## Before you start:
+
+    - You will need an API key to access this API. Please email contact@unitary.ai
+    to obtain one.
+
+    - If using the webhooks function then a preshared secret will also be required.
+
+
+
+    ## API Authentication
+
+
+    All API requests (except to /authenticate) require a valid API token in the `Authorization`
+    header.
+
+    To obtain an API token you should POST to /authenticate with your API key.
+
+
+    API Tokens will be valid for a period of time (default 24h) and should be re-used
+    until they expire or are invalidated.
+
+    Please note that the /authenticate endpoint is rate-limited and excessive requests
+    will return errors.
+
+
+    ## Submitting media for classification
+
+
+    Unitary''s API accepts files for the image/video endpoints and free text on the
+    detoxify endpoint.
+
+    The files or texts are submitted to the aforementioned endpoints for asynchronous
+    classification returning a `job_id`
+
+    associated with each request.
+
+
+    Media files can either be sent as multi-part form uploads, or preferably by including
+    a `url` field in the request where the media file can be downloaded from. Presigned
+    object-storage URLs are supported.
+
+
+    ### Current limitations
+
+    To ensure high quality and speed in our responses, we have a few limitations on
+    the size and type of media we process. Please let us know if any of these limitations
+    represent an issue for you. We are more than happy to reevaluate our solution
+    to meet your needs.
+
+    - The maximum allowed image size is 10 MB The maximum allowed video size is 200
+    MB. Requests made with media files larger than the limits specified may not be
+    processed.
+
+    - The image formats we support are .png and .jpeg
+
+    - The video formats we support are .Mp4, Mpeg, Webm, Mov, Mkv, M4v
+
+
+    ## Receiving classification results
+
+
+    For receiving results we support multiple methods:
+
+
+    - The preferred method is to utilise the webhook function by including a `callback_url`
+    parameter in the classification request. Results will be delivered by a POST request
+    to the `callback_url` as soon as the resource is classified.
+
+    - Results can also be retrieved by polling the GET endpoints. This method may
+    be inconvenient as processing can take multiple hours.
+
+
+    '
+  version: 1.0.0
+paths:
+  /authenticate:
+    post:
+      tags:
+      - API Authentication
+      summary: Authenticate with API Key to obtain an API token
+      description: 'Clients wishing to interact with the Unitary API must first authenticate
+        by calling this endpoint with a valid API Key in the request body.
+
+
+        The resulting `api_token` should be used in subsequent API requests by including
+        a header with the format:
+
+        ```
+
+        Authorization: Bearer {api_token}
+
+        ```
+
+
+        The `api_token` will be valid for a period of time (default 24 hours) and
+        should be used for all subsequent API requests until it expires, or is invalidated.
+
+
+        **This endpoint is rate-limited and may return error codes if too many authentication
+        requests are submitted within a short time frame. For this reason clients
+        should avoid re-authenticating too often.**'
+      operationId: authenticate_authenticate_post
+      requestBody:
+        content:
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/Body_authenticate_authenticate_post'
+        required: true
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/LoginResponse'
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+  /classify/policy/image/now:
+    post:
+      tags:
+      - Policy Classification
+      summary: Submit an image for immediate Policy classification
+      description: 'This endpoint predicts the policy categories of a single image.
+
+
+        The request must contain a `url` form field (a string containing a URL to
+        download the image file from).
+
+
+        Example CURL:
+
+        ```
+
+        curl --location --request POST "https://api.unitary.ai/v1/classify/policy/image/now"
+        --header "Authorization: Bearer {API_TOKEN}" --header "Content-Type: multipart/form-data"
+        --form "url={RESOURCE_URL}"
+
+        ```'
+      operationId: image_classify_policy_now_classify_policy_image_now_post
+      requestBody:
+        content:
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/Body_image_classify_policy_now_classify_policy_image_now_post'
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PolicyClassificationResponse'
+        '404':
+          description: Not found
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+      security:
+      - JWTBearer: []
+  /classify/policy/image:
+    post:
+      tags:
+      - Policy Classification
+      summary: Queue an image for Policy classification
+      description: 'This endpoint predicts the policy categories of a single image.
+
+
+        The request must contain a `url` form field (a string containing a URL to
+        download the image file from).
+
+
+        Example CURL:
+
+        ```
+
+        curl --location --request POST "https://api.unitary.ai/v1/classify/policy/image"
+        --header "Authorization: Bearer {API_TOKEN}" --header "Content-Type: multipart/form-data"
+        --form "url={RESOURCE_URL}"
+
+        ```'
+      operationId: image_policy_classify_classify_policy_image_post
+      requestBody:
+        content:
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/Body_image_policy_classify_classify_policy_image_post'
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/JobIDResponse'
+        '404':
+          description: Not found
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+      security:
+      - JWTBearer: []
+  /classify/policy/image/{job_id}:
+    get:
+      tags:
+      - Policy Classification
+      summary: Retrieve the results of a queued Policy classification job
+      operationId: image_policy_classification_results_classify_policy_image__job_id__get
+      parameters:
+      - required: true
+        schema:
+          type: string
+          format: uuid4
+          title: Job Id
+        name: job_id
+        in: path
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AsyncResponse_PolicyClassificationResponse_'
+        '404':
+          description: Not found
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+      security:
+      - JWTBearer: []
+  /classify/items-characteristics/image:
+    post:
+      tags:
+      - Items & Characteristics
+      summary: Queue an image for Items & Characteristics classification
+      description: 'This endpoint queues a job that predicts the Items & Characteristics
+        categories of a single image.
+
+
+        The request must contain either a file (a multi-part form encoded image file)
+        or a `url` form field (a string containing a URL to download the image file
+        from).
+
+
+        Example CURL:
+
+        ```
+
+        curl --location --request POST https://api.unitary.ai/v1/classify/items-characteristics/image
+        --header "Authorization: Bearer {API_TOKEN}" --header "Content-Type: multipart/form-data"
+        --form "url={RESOURCE_URL}"
+
+        ```
+
+
+        A job ID will be returned in the response.
+
+
+        If a `callback_url` form field is included in the request then the results
+        webhook will be sent as a POST request to this URL once the image has been
+        classified.
+
+
+        Alternatively results can be obtained by making a GET request to the results
+        endpoint using the job ID.
+
+
+        **Webhooks should be implemented for any use of this endpoint at scale to
+        prevent unnecessary polling of the results endpoint.**'
+      operationId: image_items_characteristics_classify_classify_items_characteristics_image_post
+      requestBody:
+        content:
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/Body_image_items_characteristics_classify_classify_items_characteristics_image_post'
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/JobIDResponse'
+        '404':
+          description: Not found
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+      security:
+      - JWTBearer: []
+  /classify/items-characteristics/image/{job_id}:
+    get:
+      tags:
+      - Items & Characteristics
+      summary: Retrieve the results of a queued Items & Characteristics classification
+      description: 'This endpoint returns the results of a previously queued classify
+        job.
+
+
+        The response for each item is a prevalence score between 0 and 1 that represents
+        how present it is in the content. 1 is highest prevalence and 0 is lowest
+        prevalence.
+
+
+        You can use these scores in mappings or models to implement safety policies,
+        for example setting a numerical threshold for automated flagging of content
+        or in a linear regression model.
+
+
+        Note that the score meaning and distribution is different for each item: for
+        example, a 0.7 for `pepe` won''t translate to the same likelihood of harmful
+        content as a 0.7 for `confederate flag`.
+
+        Therefore you should calculate an individual threshold for each item. For
+        best performance, we suggest calculating a threshold using labelled data,
+        optimising for the balance of precision and
+
+        recall best suited to your needs. The Unitary team is happy to provide guidance
+        on this process.'
+      operationId: image_items_characteristics_results_classify_items_characteristics_image__job_id__get
+      parameters:
+      - required: true
+        schema:
+          type: string
+          format: uuid4
+          title: Job Id
+        name: job_id
+        in: path
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AsyncResponse_ItemsCharacteristicsResponse_'
+        '404':
+          description: Not found
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+      security:
+      - JWTBearer: []
+  /classify/policy/video/now:
+    post:
+      tags:
+      - Policy Classification
+      summary: Submit a video for immediate Policy classification
+      description: 'This endpoint predicts the policy categories of a single video.
+
+
+        The request must contain a `url` form field (a string containing a URL to
+        download the video file from).
+
+
+        Example CURL:
+
+        ```
+
+        curl --location --request POST "https://api.unitary.ai/v1/classify/policy/video/now"
+        --header "Authorization: Bearer {API_TOKEN}" --header "Content-Type: multipart/form-data"
+        --form "url={RESOURCE_URL}"
+
+        ```'
+      operationId: video_classify_policy_now_classify_policy_video_now_post
+      requestBody:
+        content:
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/Body_video_classify_policy_now_classify_policy_video_now_post'
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/VideoPolicyClassificationResponse'
+        '404':
+          description: Not found
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+      security:
+      - JWTBearer: []
+  /classify/policy/video:
+    post:
+      tags:
+      - Policy Classification
+      summary: Queue a video for Policy classification
+      description: 'This endpoint predicts the policy categories of a single video.
+
+
+        The request must contain a `url` form field (a string containing a URL to
+        download the video file from).
+
+
+        Example CURL:
+
+        ```
+
+        curl --location --request POST "https://api.unitary.ai/v1/classify/policy/video"
+        --header "Authorization: Bearer {API_TOKEN}" --header "Content-Type: multipart/form-data"
+        --form "url={RESOURCE_URL}"
+
+        ```'
+      operationId: video_policy_classify_classify_policy_video_post
+      requestBody:
+        content:
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/Body_video_policy_classify_classify_policy_video_post'
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/JobIDResponse'
+        '404':
+          description: Not found
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+      security:
+      - JWTBearer: []
+  /classify/policy/video/{job_id}:
+    get:
+      tags:
+      - Policy Classification
+      summary: Retrieve the results of a queued Policy classification job
+      operationId: video_policy_classification_results_classify_policy_video__job_id__get
+      parameters:
+      - required: true
+        schema:
+          type: string
+          format: uuid4
+          title: Job Id
+        name: job_id
+        in: path
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AsyncResponse_VideoPolicyClassificationResponse_'
+        '404':
+          description: Not found
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+      security:
+      - JWTBearer: []
+  /classify/items-characteristics/video:
+    post:
+      tags:
+      - Items & Characteristics
+      summary: Queue a video for Items & Characteristics classification
+      description: 'This endpoint queues a job that predicts the Items & Characteristics
+        categories of a single video.
+
+
+        The request must contain either a file (a multi-part form encoded video file)
+        or a `url` form field (a string containing a URL to download the video file
+        from).
+
+
+        Example CURL:
+
+        ```
+
+        curl --location --request POST https://api.unitary.ai/v1/classify/items-characteristics/video
+        --header "Authorization: Bearer {API_TOKEN}" --header "Content-Type: multipart/form-data"
+        --form "url={RESOURCE_URL}"
+
+        ```
+
+
+        A job ID will be returned in the response.
+
+
+        If a `callback_url` form field is included in the request then the results
+        webhook will be sent as a POST request to this URL once the image has been
+        classified.
+
+
+        Alternatively results can be obtained by making a GET request to the results
+        endpoint using the job ID.
+
+
+        **Webhooks should be implemented for any use of this endpoint at scale to
+        prevent unnecessary polling of the results endpoint.**'
+      operationId: video_items_characteristics_classify_classify_items_characteristics_video_post
+      requestBody:
+        content:
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/Body_video_items_characteristics_classify_classify_items_characteristics_video_post'
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/JobIDResponse'
+        '404':
+          description: Not found
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+      security:
+      - JWTBearer: []
+  /classify/items-characteristics/video/{job_id}:
+    get:
+      tags:
+      - Items & Characteristics
+      summary: Retrieve the results of a queued Items & Characteristics classification
+      description: 'This endpoint returns the results of a previously queued classify
+        job.
+
+
+        The response for each item is a prevalence score between 0 and 1 that represents
+        how present it is in the content. 1 is highest prevalence and 0 is lowest
+        prevalence.
+
+
+        You can use these scores in mappings or models to implement safety policies,
+        for example setting a numerical threshold for automated flagging of content
+        or in a linear regression model.
+
+
+        Note that the score meaning and distribution is different for each item: for
+        example, a 0.7 for `pepe` won''t translate to the same likelihood of harmful
+        content as a 0.7 for `confederate flag`.
+
+        Therefore you should calculate an individual threshold for each item. For
+        best performance, we suggest calculating a threshold using labelled data,
+        optimising for the balance of precision and
+
+        recall best suited to your needs. The Unitary team is happy to provide guidance
+        on this process.'
+      operationId: video_items_characteristics_results_classify_items_characteristics_video__job_id__get
+      parameters:
+      - required: true
+        schema:
+          type: string
+          format: uuid4
+          title: Job Id
+        name: job_id
+        in: path
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AsyncResponse_VideoItemsCharacteristicsResponse_'
+        '404':
+          description: Not found
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+      security:
+      - JWTBearer: []
+  /detoxify/text/:
+    post:
+      tags:
+      - Detoxify
+      summary: Queue text for Detoxify classification
+      description: This endpoint predicts the Detoxify categories of text.
+      operationId: text_detoxify_classify_detoxify_text__post
+      requestBody:
+        content:
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/Body_text_detoxify_classify_detoxify_text__post'
+        required: true
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/JobIDResponse'
+        '404':
+          description: Not found
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+      security:
+      - JWTBearer: []
+  /detoxify/text/{job_id}:
+    get:
+      tags:
+      - Detoxify
+      summary: Retrieve the results of a queued Detoxify classification
+      description: This endpoint returns the results of a previously queued classify
+        job
+      operationId: text_results_detoxify_text__job_id__get
+      parameters:
+      - required: true
+        schema:
+          type: string
+          format: uuid4
+          title: Job Id
+        name: job_id
+        in: path
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AsyncResponse_DetoxifyResponse_'
+        '404':
+          description: Not found
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+      security:
+      - JWTBearer: []
+  /moderate:
+    post:
+      tags:
+      - moderation
+      summary: Moderate Content
+      operationId: moderate_content_moderate_post
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/VirtualModeratorRequest'
+        required: true
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/VirtualModeratorQueuedResponse'
+        '404':
+          description: Not found
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+      security:
+      - JWTBearer: []
+components:
+  schemas:
+    AsyncResponseStatus:
+      enum:
+      - done
+      - failed
+      - queued
+      title: AsyncResponseStatus
+      description: An enumeration.
+    AsyncResponse_DetoxifyResponse_:
+      properties:
+        status:
+          allOf:
+          - $ref: '#/components/schemas/AsyncResponseStatus'
+          title: Status of classification job
+        results:
+          allOf:
+          - $ref: '#/components/schemas/DetoxifyResponse'
+          title: Classification results
+        msg:
+          type: string
+          title: Error details
+      type: object
+      required:
+      - status
+      title: AsyncResponse[DetoxifyResponse]
+    AsyncResponse_ItemsCharacteristicsResponse_:
+      properties:
+        status:
+          allOf:
+          - $ref: '#/components/schemas/AsyncResponseStatus'
+          title: Status of classification job
+        results:
+          allOf:
+          - $ref: '#/components/schemas/ItemsCharacteristicsResponse'
+          title: Classification results
+        msg:
+          type: string
+          title: Error details
+      type: object
+      required:
+      - status
+      title: AsyncResponse[ItemsCharacteristicsResponse]
+    AsyncResponse_PolicyClassificationResponse_:
+      properties:
+        status:
+          allOf:
+          - $ref: '#/components/schemas/AsyncResponseStatus'
+          title: Status of classification job
+        results:
+          allOf:
+          - $ref: '#/components/schemas/PolicyClassificationResponse'
+          title: Classification results
+        msg:
+          type: string
+          title: Error details
+      type: object
+      required:
+      - status
+      title: AsyncResponse[PolicyClassificationResponse]
+    AsyncResponse_VideoItemsCharacteristicsResponse_:
+      properties:
+        status:
+          allOf:
+          - $ref: '#/components/schemas/AsyncResponseStatus'
+          title: Status of classification job
+        results:
+          allOf:
+          - $ref: '#/components/schemas/VideoItemsCharacteristicsResponse'
+          title: Classification results
+        msg:
+          type: string
+          title: Error details
+      type: object
+      required:
+      - status
+      title: AsyncResponse[VideoItemsCharacteristicsResponse]
+    AsyncResponse_VideoPolicyClassificationResponse_:
+      properties:
+        status:
+          allOf:
+          - $ref: '#/components/schemas/AsyncResponseStatus'
+          title: Status of classification job
+        results:
+          allOf:
+          - $ref: '#/components/schemas/VideoPolicyClassificationResponse'
+          title: Classification results
+        msg:
+          type: string
+          title: Error details
+      type: object
+      required:
+      - status
+      title: AsyncResponse[VideoPolicyClassificationResponse]
+    Body_authenticate_authenticate_post:
+      properties:
+        key:
+          type: string
+          format: password
+          title: Key
+          writeOnly: true
+      type: object
+      required:
+      - key
+      title: Body_authenticate_authenticate_post
+    Body_image_classify_policy_now_classify_policy_image_now_post:
+      properties:
+        callback_url:
+          type: string
+          maxLength: 2083
+          minLength: 1
+          format: uri
+          title: Webhooks callback URL
+        caption:
+          type: string
+          title: Caption
+        url:
+          type: string
+          maxLength: 65536
+          minLength: 1
+          format: uri
+          title: Url
+      type: object
+      title: Body_image_classify_policy_now_classify_policy_image_now_post
+    Body_image_items_characteristics_classify_classify_items_characteristics_image_post:
+      properties:
+        callback_url:
+          type: string
+          maxLength: 2083
+          minLength: 1
+          format: uri
+          title: Webhooks callback URL
+        caption:
+          type: string
+          title: Caption
+        file:
+          type: string
+          format: binary
+          title: File
+        url:
+          type: string
+          maxLength: 65536
+          minLength: 1
+          format: uri
+          title: Url
+      type: object
+      title: Body_image_items_characteristics_classify_classify_items_characteristics_image_post
+    Body_image_policy_classify_classify_policy_image_post:
+      properties:
+        callback_url:
+          type: string
+          maxLength: 2083
+          minLength: 1
+          format: uri
+          title: Webhooks callback URL
+        caption:
+          type: string
+          title: Caption
+        url:
+          type: string
+          maxLength: 65536
+          minLength: 1
+          format: uri
+          title: Url
+      type: object
+      title: Body_image_policy_classify_classify_policy_image_post
+    Body_text_detoxify_classify_detoxify_text__post:
+      properties:
+        callback_url:
+          type: string
+          maxLength: 2083
+          minLength: 1
+          format: uri
+          title: Webhooks callback URL
+        text:
+          type: string
+          maxLength: 262144
+          title: Text to classify (max 256kb)
+        model:
+          allOf:
+          - $ref: '#/components/schemas/DetoxifyModel'
+          title: Detoxify model type
+          default: multilingual
+        correlation_id:
+          type: string
+          maxLength: 128
+          title: An optional id chosen by the user to correlate requests and responses
+      type: object
+      required:
+      - text
+      title: Body_text_detoxify_classify_detoxify_text__post
+    Body_video_classify_policy_now_classify_policy_video_now_post:
+      properties:
+        callback_url:
+          type: string
+          maxLength: 2083
+          minLength: 1
+          format: uri
+          title: Webhooks callback URL
+        caption:
+          type: string
+          title: Caption
+        url:
+          type: string
+          maxLength: 65536
+          minLength: 1
+          format: uri
+          title: Url
+      type: object
+      title: Body_video_classify_policy_now_classify_policy_video_now_post
+    Body_video_items_characteristics_classify_classify_items_characteristics_video_post:
+      properties:
+        callback_url:
+          type: string
+          maxLength: 2083
+          minLength: 1
+          format: uri
+          title: Webhooks callback URL
+        caption:
+          type: string
+          title: Caption
+        file:
+          type: string
+          format: binary
+          title: File
+        url:
+          type: string
+          maxLength: 65536
+          minLength: 1
+          format: uri
+          title: Url
+      type: object
+      title: Body_video_items_characteristics_classify_classify_items_characteristics_video_post
+    Body_video_policy_classify_classify_policy_video_post:
+      properties:
+        callback_url:
+          type: string
+          maxLength: 2083
+          minLength: 1
+          format: uri
+          title: Webhooks callback URL
+        caption:
+          type: string
+          title: Caption
+        url:
+          type: string
+          maxLength: 65536
+          minLength: 1
+          format: uri
+          title: Url
+      type: object
+      title: Body_video_policy_classify_classify_policy_video_post
+    DetoxifyModel:
+      type: string
+      enum:
+      - multilingual
+      title: DetoxifyModel
+      description: An enumeration.
+    DetoxifyResponse:
+      properties:
+        toxicity:
+          type: number
+          title: Toxicity
+        severe_toxicity:
+          type: number
+          title: Severe Toxicity
+        obscene:
+          type: number
+          title: Obscene
+        threat:
+          type: number
+          title: Threat
+        insult:
+          type: number
+          title: Insult
+        identity_attack:
+          type: number
+          title: Identity Attack
+        sexual_explicit:
+          type: number
+          title: Sexual Explicit
+      type: object
+      required:
+      - toxicity
+      - severe_toxicity
+      - obscene
+      - threat
+      - insult
+      - identity_attack
+      - sexual_explicit
+      title: DetoxifyResponse
+    FullHateSymbols:
+      properties:
+        confederate_flag:
+          type: number
+          title: Confederate Flag
+          example: 0.54324
+        pepe_frog:
+          type: number
+          title: Pepe Frog
+          example: 0.54324
+        nazi_swastika:
+          type: number
+          title: Nazi Swastika
+          example: 0.54324
+      type: object
+      required:
+      - confederate_flag
+      - pepe_frog
+      - nazi_swastika
+      title: FullHateSymbols
+    FullNSFWCategory:
+      properties:
+        adult_content:
+          type: number
+          title: Adult Content
+          example: 0.54324
+        suggestive:
+          type: number
+          title: Suggestive
+          example: 0.54324
+        adult_toys:
+          type: number
+          title: Adult Toys
+          example: 0.54324
+        medical:
+          type: number
+          title: Medical
+          example: 0.54324
+        over_18:
+          type: number
+          title: Over 18
+          example: 0.54324
+        exposed_anus:
+          type: number
+          title: Exposed Anus
+          example: 0.54324
+        exposed_armpits:
+          type: number
+          title: Exposed Armpits
+          example: 0.54324
+        exposed_belly:
+          type: number
+          title: Exposed Belly
+          example: 0.54324
+        covered_belly:
+          type: number
+          title: Covered Belly
+          example: 0.54324
+        covered_buttocks:
+          type: number
+          title: Covered Buttocks
+          example: 0.54324
+        exposed_buttocks:
+          type: number
+          title: Exposed Buttocks
+          example: 0.54324
+        covered_feet:
+          type: number
+          title: Covered Feet
+          example: 0.54324
+        exposed_feet:
+          type: number
+          title: Exposed Feet
+          example: 0.54324
+        covered_breast_f:
+          type: number
+          title: Covered Breast F
+          example: 0.54324
+        exposed_breast_f:
+          type: number
+          title: Exposed Breast F
+          example: 0.54324
+        covered_genitalia_f:
+          type: number
+          title: Covered Genitalia F
+          example: 0.54324
+        exposed_genitalia_f:
+          type: number
+          title: Exposed Genitalia F
+          example: 0.54324
+        exposed_breast_m:
+          type: number
+          title: Exposed Breast M
+          example: 0.54324
+        exposed_genitalia_m:
+          type: number
+          title: Exposed Genitalia M
+          example: 0.54324
+      type: object
+      required:
+      - adult_content
+      - suggestive
+      title: FullNSFWCategory
+    FullOtherCategory:
+      properties:
+        child:
+          type: number
+          title: Child
+          example: 0.54324
+        middle_finger_gesture:
+          type: number
+          title: Middle Finger Gesture
+          example: 0.54324
+        toy:
+          type: number
+          title: Toy
+          example: 0.54324
+        gambling_machine:
+          type: number
+          title: Gambling Machine
+          example: 0.54324
+        face_f:
+          type: number
+          title: Face F
+          example: 0.54324
+        face_m:
+          type: number
+          title: Face M
+          example: 0.54324
+      type: object
+      required:
+      - child
+      - middle_finger_gesture
+      - toy
+      - gambling_machine
+      title: FullOtherCategory
+    FullSubstancesCategory:
+      properties:
+        alcohol:
+          type: number
+          title: Alcohol
+          example: 0.54324
+        drink:
+          type: number
+          title: Drink
+          example: 0.54324
+        smoking_and_tobacco:
+          type: number
+          title: Smoking And Tobacco
+          example: 0.54324
+        marijuana:
+          type: number
+          title: Marijuana
+          example: 0.54324
+        pills:
+          type: number
+          title: Pills
+          example: 0.54324
+        recreational_pills:
+          type: number
+          title: Recreational Pills
+          example: 0.54324
+      type: object
+      required:
+      - alcohol
+      - drink
+      - smoking_and_tobacco
+      - marijuana
+      - pills
+      - recreational_pills
+      title: FullSubstancesCategory
+    FullViolenceCategory:
+      properties:
+        violence:
+          type: number
+          title: Violence
+          example: 0.54324
+        firearm:
+          type: number
+          title: Firearm
+          example: 0.54324
+        knife:
+          type: number
+          title: Knife
+          example: 0.54324
+        violent_knife:
+          type: number
+          title: Violent Knife
+          example: 0.54324
+      type: object
+      required:
+      - violence
+      - firearm
+      - knife
+      - violent_knife
+      title: FullViolenceCategory
+    FullVisualContentCategory:
+      properties:
+        artistic:
+          type: number
+          title: Artistic
+          example: 0.54324
+        comic:
+          type: number
+          title: Comic
+          example: 0.54324
+        meme:
+          type: number
+          title: Meme
+          example: 0.54324
+        screenshot:
+          type: number
+          title: Screenshot
+          example: 0.54324
+        map:
+          type: number
+          title: Map
+          example: 0.54324
+        poster_cover:
+          type: number
+          title: Poster Cover
+          example: 0.54324
+        game_screenshot:
+          type: number
+          title: Game Screenshot
+          example: 0.54324
+        face_filter:
+          type: number
+          title: Face Filter
+          example: 0.54324
+        promo_info_graphic:
+          type: number
+          title: Promo Info Graphic
+          example: 0.54324
+        photo:
+          type: number
+          title: Photo
+          example: 0.54324
+      type: object
+      required:
+      - artistic
+      - comic
+      - meme
+      - screenshot
+      - map
+      - poster_cover
+      - game_screenshot
+      - face_filter
+      - promo_info_graphic
+      - photo
+      title: FullVisualContentCategory
+    HTTPValidationError:
+      properties:
+        detail:
+          items:
+            $ref: '#/components/schemas/ValidationError'
+          type: array
+          title: Detail
+      type: object
+      title: HTTPValidationError
+    ItemsCharacteristicsResponse:
+      properties:
+        violence:
+          $ref: '#/components/schemas/FullViolenceCategory'
+        substances:
+          $ref: '#/components/schemas/FullSubstancesCategory'
+        nsfw:
+          $ref: '#/components/schemas/FullNSFWCategory'
+        hate_symbols:
+          $ref: '#/components/schemas/FullHateSymbols'
+        ocr_language_toxicity:
+          $ref: '#/components/schemas/LanguageToxicityCategory'
+        audio_language_toxicity:
+          $ref: '#/components/schemas/LanguageToxicityCategory'
+        caption_language_toxicity:
+          $ref: '#/components/schemas/LanguageToxicityCategory'
+        visual_content:
+          $ref: '#/components/schemas/FullVisualContentCategory'
+        other:
+          $ref: '#/components/schemas/FullOtherCategory'
+        ocr_texts:
+          items:
+            type: string
+          type: array
+          title: Ocr Texts
+        audio_texts:
+          items:
+            type: string
+          type: array
+          title: Audio Texts
+        url:
+          type: string
+          maxLength: 65536
+          minLength: 1
+          format: uri
+          title: Url
+      type: object
+      required:
+      - violence
+      - substances
+      - nsfw
+      - hate_symbols
+      - visual_content
+      - other
+      title: ItemsCharacteristicsResponse
+    JobIDResponse:
+      properties:
+        job_id:
+          type: string
+          format: uuid4
+          title: Job Id
+      type: object
+      required:
+      - job_id
+      title: JobIDResponse
+    LanguageToxicityCategory:
+      properties:
+        toxicity:
+          type: number
+          title: Toxicity
+          example: 0.54324
+        severe_toxicity:
+          type: number
+          title: Severe Toxicity
+          example: 0.54324
+        obscene:
+          type: number
+          title: Obscene
+          example: 0.54324
+        insult:
+          type: number
+          title: Insult
+          example: 0.54324
+        identity_attack:
+          type: number
+          title: Identity Attack
+          example: 0.54324
+        threat:
+          type: number
+          title: Threat
+          example: 0.54324
+        sexual_explicit:
+          type: number
+          title: Sexual Explicit
+          example: 0.54324
+      type: object
+      required:
+      - toxicity
+      - severe_toxicity
+      - obscene
+      - insult
+      - identity_attack
+      - threat
+      - sexual_explicit
+      title: LanguageToxicityCategory
+    LoginResponse:
+      properties:
+        api_token:
+          type: string
+          title: Api Token
+        expiry:
+          type: string
+          format: date-time
+          title: Expiry
+      type: object
+      required:
+      - api_token
+      - expiry
+      title: LoginResponse
+    PolicyCategoryFull:
+      properties:
+        name:
+          type: string
+          title: Policy category name
+        description:
+          type: string
+          title: Policy category description
+        risk_level:
+          type: string
+          title: Policy risk level
+        score:
+          type: number
+          title: Policy classification score
+      type: object
+      required:
+      - name
+      - description
+      - risk_level
+      title: PolicyCategoryFull
+      example:
+        name: ARMS_AMMO
+        description: Arms & Ammunition
+        risk_level: high
+        score: 0.8
+    PolicyCategoryRiskLevels:
+      properties:
+        name:
+          type: string
+          title: Policy category name
+        description:
+          type: string
+          title: Policy category description
+        risk_level:
+          type: string
+          title: Policy risk level
+      type: object
+      required:
+      - name
+      - description
+      - risk_level
+      title: PolicyCategoryRiskLevels
+      description: "Possible categories names are:\n\n- ADULT_CONTENT: Adult & Explicit\
+        \ Sexual Content\n- ARMS_AMMO: Arms & Ammunition\n- CRIME_HARMFUL_ACTS: Crime\
+        \ & Harmful acts to individuals and Society,\n                      Human\
+        \ Right Violations\n- DEATH_INJURY_MILITARY: Death, Injury or Military Conflict\n\
+        - DEBATED_SENSITIVE: Debated Sensitive Social Issue\n- DRUGS_TOBACCO_ALCOHOL:\
+        \ Illegal Drugs/Tobacco/e-Cigarettes/Vaping/Alcohol\n- HATE_SPEECH_AGGRESSION:\
+        \ Hate speech & acts of aggression\n- OBSCENITY_PROFANITY: Obscenity and Profanity,\
+        \ including language,\n                       gestures, and explicitly gory,\
+        \ graphic or repulsive\n                       content intended to shock and\
+        \ disgust\n- PIRACY: Online piracy\n- SPAM: Spam or Harmful Content\n- TERRORISM:\
+        \ Terrorism\n\nFor each detected category the risk may be:\n\n- high\n- medium\n\
+        - low"
+      example:
+        name: ARMS_AMMO
+        description: Arms & Ammunition
+        risk_level: high
+    PolicyCategoryScores:
+      properties:
+        name:
+          type: string
+          title: Policy category name
+        description:
+          type: string
+          title: Policy category description
+        score:
+          type: number
+          title: Policy classification score
+      type: object
+      required:
+      - name
+      - description
+      title: PolicyCategoryScores
+      example:
+        name: ARMS_AMMO
+        description: Arms & Ammunition
+        score: 0.8
+    PolicyClassificationResponse:
+      properties:
+        url:
+          type: string
+          maxLength: 65536
+          minLength: 1
+          format: uri
+          title: Url
+        policy_categories:
+          anyOf:
+          - items:
+              $ref: '#/components/schemas/PolicyCategoryFull'
+            type: array
+          - items:
+              $ref: '#/components/schemas/PolicyCategoryRiskLevels'
+            type: array
+          - items:
+              $ref: '#/components/schemas/PolicyCategoryScores'
+            type: array
+          title: Policy Categories
+      type: object
+      required:
+      - policy_categories
+      title: PolicyClassificationResponse
+    ValidationError:
+      properties:
+        loc:
+          items:
+            anyOf:
+            - type: string
+            - type: integer
+          type: array
+          title: Location
+        msg:
+          type: string
+          title: Message
+        type:
+          type: string
+          title: Error Type
+      type: object
+      required:
+      - loc
+      - msg
+      - type
+      title: ValidationError
+    VideoItemsCharacteristicsResponse:
+      properties:
+        violence:
+          $ref: '#/components/schemas/FullViolenceCategory'
+        substances:
+          $ref: '#/components/schemas/FullSubstancesCategory'
+        nsfw:
+          $ref: '#/components/schemas/FullNSFWCategory'
+        hate_symbols:
+          $ref: '#/components/schemas/FullHateSymbols'
+        ocr_language_toxicity:
+          $ref: '#/components/schemas/LanguageToxicityCategory'
+        audio_language_toxicity:
+          $ref: '#/components/schemas/LanguageToxicityCategory'
+        caption_language_toxicity:
+          $ref: '#/components/schemas/LanguageToxicityCategory'
+        visual_content:
+          $ref: '#/components/schemas/FullVisualContentCategory'
+        other:
+          $ref: '#/components/schemas/FullOtherCategory'
+        ocr_texts:
+          items:
+            type: string
+          type: array
+          title: Ocr Texts
+        audio_texts:
+          items:
+            type: string
+          type: array
+          title: Audio Texts
+        url:
+          type: string
+          maxLength: 65536
+          minLength: 1
+          format: uri
+          title: Url
+        metadata:
+          $ref: '#/components/schemas/VideoMetadata'
+      type: object
+      required:
+      - violence
+      - substances
+      - nsfw
+      - hate_symbols
+      - visual_content
+      - other
+      title: VideoItemsCharacteristicsResponse
+    VideoMetadata:
+      properties:
+        width:
+          type: integer
+          exclusiveMinimum: 0.0
+          title: Video width (pixels)
+        height:
+          type: integer
+          exclusiveMinimum: 0.0
+          title: Video height (pixels)
+        fps:
+          type: number
+          exclusiveMinimum: 0.0
+          title: Video average framerate
+        duration:
+          type: number
+          exclusiveMinimum: 0.0
+          title: Video duration (seconds)
+        seconds_processed:
+          type: number
+          minimum: 0.0
+          title: Number of seconds processed
+          description: The number of seconds of video processed to obtain results
+      type: object
+      required:
+      - width
+      - height
+      - fps
+      - duration
+      - seconds_processed
+      title: VideoMetadata
+    VideoPolicyClassificationResponse:
+      properties:
+        url:
+          type: string
+          maxLength: 65536
+          minLength: 1
+          format: uri
+          title: Url
+        policy_categories:
+          anyOf:
+          - items:
+              $ref: '#/components/schemas/PolicyCategoryFull'
+            type: array
+          - items:
+              $ref: '#/components/schemas/PolicyCategoryRiskLevels'
+            type: array
+          - items:
+              $ref: '#/components/schemas/PolicyCategoryScores'
+            type: array
+          title: Policy Categories
+        metadata:
+          $ref: '#/components/schemas/VideoMetadata'
+      type: object
+      required:
+      - policy_categories
+      title: VideoPolicyClassificationResponse
+    TextAttachment:
+      properties:
+        relation_to_main_media:
+          type: string
+          enum:
+          - related_link
+          - comment
+          - post
+          - chat
+          - profile
+          - post_by_same_user
+          - metadata
+          - user_report
+          title: Relation To Main Media
+          description: Defines how the attachment is related to the main media, such
+            as being a comment, a post, or a chat
+          default: post
+        type:
+          type: string
+          enum:
+          - text
+          const: text
+          title: Type
+          default: text
+        mime_type:
+          type: string
+          enum:
+          - text/markdown
+          - text/plain
+          - text/html
+          title: Mime Type
+          description: MIME type of the text content
+        value:
+          type: string
+          title: Value
+          description: Text content, limited to 100 KiB
+      type: object
+      required:
+      - mime_type
+      - value
+      title: TextAttachment
+    TextMainContent:
+      properties:
+        external_id:
+          type: string
+          title: External Id
+        is_user_report:
+          type: boolean
+          title: Is User Report
+          default: false
+        value:
+          type: string
+          title: Value
+        type:
+          type: string
+          enum:
+          - text
+          const: text
+          title: Type
+        resource_url:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Resource Url
+      additionalProperties: false
+      type: object
+      required:
+      - external_id
+      - value
+      - type
+      title: TextMainContent
+    LinkAttachment:
+      properties:
+        relation_to_main_media:
+          type: string
+          enum:
+          - related_link
+          - comment
+          - post
+          - chat
+          - profile
+          - post_by_same_user
+          - metadata
+          - user_report
+          title: Relation To Main Media
+          description: Defines how the attachment is related to the main media, such
+            as being a comment, a post, or a chat
+          default: post
+        type:
+          type: string
+          enum:
+          - link
+          const: link
+          title: Type
+          default: link
+        value:
+          type: string
+          minLength: 1
+          format: uri
+          title: Value
+      type: object
+      required:
+      - value
+      title: LinkAttachment
+    MediaMainContent:
+      properties:
+        external_id:
+          type: string
+          title: External Id
+        is_user_report:
+          type: boolean
+          title: Is User Report
+          default: false
+        value:
+          type: string
+          minLength: 1
+          format: uri
+          title: Value
+        type:
+          type: string
+          enum:
+          - image
+          - video
+          title: Type
+      additionalProperties: false
+      type: object
+      required:
+      - external_id
+      - value
+      - type
+      title: MediaMainContent
+    MetadataAttachment:
+      properties:
+        relation_to_main_media:
+          type: string
+          enum:
+          - related_link
+          - comment
+          - post
+          - chat
+          - profile
+          - post_by_same_user
+          - metadata
+          - user_report
+          title: Relation To Main Media
+          description: Defines how the attachment is related to the main media, such
+            as being a comment, a post, or a chat
+          default: post
+        type:
+          type: string
+          enum:
+          - metadata
+          const: metadata
+          title: Type
+          default: metadata
+        value:
+          type: string
+          title: Value
+        mime_type:
+          type: string
+          enum:
+          - application/json
+          const: application/json
+          title: Mime Type
+          description: MIME type of the metadata content
+      type: object
+      required:
+      - value
+      - mime_type
+      title: MetadataAttachment
+    UserReportAttachment:
+      properties:
+        relation_to_main_media:
+          type: string
+          enum:
+          - related_link
+          - comment
+          - post
+          - chat
+          - profile
+          - post_by_same_user
+          - metadata
+          - user_report
+          title: Relation To Main Media
+          description: Defines how the attachment is related to the main media, such
+            as being a comment, a post, or a chat
+          default: post
+        type:
+          type: string
+          enum:
+          - user_report
+          const: user_report
+          title: Type
+          default: user_report
+        value:
+          type: string
+          title: Value
+      type: object
+      required:
+      - value
+      title: UserReportAttachment
+    VirtualModeratorQueuedResponse:
+      properties:
+        moderation_job_id:
+          type: string
+          pattern: ^vmod_[0-7][0-9a-hjkmnp-tv-z]{25}$
+          title: Moderation Job Id
+          description: The moderation job ID, which has a 'vmod' prefix
+          examples:
+          - vmod_01h45ytscbebyvny4gc8cr8ma2
+        external_id:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: External Id
+          description: Optional external ID as specified in the request
+        classification_job_id:
+          anyOf:
+          - type: string
+            format: uuid
+          - type: 'null'
+          title: Classification Job Id
+          description: The job ID of the initial classification
+      additionalProperties: false
+      type: object
+      required:
+      - moderation_job_id
+      - classification_job_id
+      title: VirtualModeratorQueuedResponse
+    VirtualModeratorRequest:
+      properties:
+        main_content:
+          oneOf:
+          - $ref: '#/components/schemas/MediaMainContent'
+          - $ref: '#/components/schemas/TextMainContent'
+          title: Main Content
+          discriminator:
+            propertyName: type
+            mapping:
+              image: '#/components/schemas/MediaMainContent'
+              text: '#/components/schemas/TextMainContent'
+              video: '#/components/schemas/MediaMainContent'
+        classification_job_id:
+          anyOf:
+          - type: string
+            format: uuid
+          - type: 'null'
+          title: Classification Job Id
+        attachments:
+          items:
+            oneOf:
+            - $ref: '#/components/schemas/TextAttachment'
+            - $ref: '#/components/schemas/LinkAttachment'
+            - $ref: '#/components/schemas/UserReportAttachment'
+            - $ref: '#/components/schemas/MetadataAttachment'
+            description: Attachment adding context to the main content
+            discriminator:
+              propertyName: type
+              mapping:
+                link: '#/components/schemas/LinkAttachment'
+                metadata: '#/components/schemas/MetadataAttachment'
+                text: '#/components/schemas/TextAttachment'
+                user_report: '#/components/schemas/UserReportAttachment'
+          type: array
+          title: Attachments
+        callback_url:
+          type: string
+          maxLength: 2083
+          minLength: 1
+          format: uri
+          title: Callback Url
+      additionalProperties: false
+      type: object
+      required:
+      - main_content
+      - attachments
+      - callback_url
+      title: VirtualModeratorRequest
+      description: Request received by the API worker in the HTTP POST
+  securitySchemes:
+    JWTBearer:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT

@@ -1,0 +1,41 @@
+generated: '2026-07-21'
+method: derived
+format: custom
+source: openapi/unitary-ai-content-classification-openapi-original.yaml + https://docs.unitary.ai/api-references/integrating_webhooks
+envelope: >-
+  Synchronous API errors return FastAPI-style JSON: 422 responses carry
+  HTTPValidationError with detail[] entries of {loc, msg, type}. Asynchronous
+  failures are delivered in the webhook/result payload with is_error: true and
+  result.error carrying a human-readable message.
+problems:
+  - status: 422
+    title: Validation Error
+    schema: HTTPValidationError (detail[] of {loc, msg, type})
+    remediation: Fix the request body/parameters named in detail[].loc and resubmit.
+    source_operations:
+      - openapi/unitary-ai-content-classification-openapi-original.yaml#authenticate_authenticate_post
+      - openapi/unitary-ai-content-classification-openapi-original.yaml#image_policy_classify_classify_policy_image_post
+      - openapi/unitary-ai-content-classification-openapi-original.yaml#video_policy_classify_classify_policy_video_post
+      - openapi/unitary-ai-content-classification-openapi-original.yaml#text_detoxify_classify_detoxify_text__post
+      - openapi/unitary-ai-content-classification-openapi-original.yaml#moderate_content_moderate_post
+  - status: 404
+    title: Not found
+    remediation: Check the job_id — results endpoints return 404 for unknown jobs.
+    source_operations:
+      - openapi/unitary-ai-content-classification-openapi-original.yaml#image_policy_classification_results_classify_policy_image__job_id__get
+      - openapi/unitary-ai-content-classification-openapi-original.yaml#video_policy_classification_results_classify_policy_video__job_id__get
+      - openapi/unitary-ai-content-classification-openapi-original.yaml#text_results_detoxify_text__job_id__get
+  - status: 429
+    title: Authentication rate limit
+    remediation: >-
+      The /authenticate endpoint is rate-limited; re-use the 24-hour api_token
+      instead of re-authenticating per request. (Documented as "rate-limited and
+      may return error codes"; the docs do not publish the exact status code or
+      rate-limit headers.)
+    documented: https://docs.unitary.ai/api-references/authentication
+  - status: null
+    title: Asynchronous processing error (webhook payload)
+    schema: '{data: {job_id, callback_url, is_error: true, result: {error: "<message>"}}}'
+    example_message: Failed to decode video.
+    remediation: Inspect result.error; common causes are undecodable media, unsupported formats, or oversize files (video 200MB / image 10MB / text 256KB).
+    documented: https://docs.unitary.ai/api-references/integrating_webhooks

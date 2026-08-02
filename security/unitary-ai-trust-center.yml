@@ -1,0 +1,21 @@
+generated: '2026-07-21'
+method: searched
+probe: true
+url: https://trust.unitary.ai/
+platform: Vanta Trust Report
+certifications: []
+notes: >-
+  Unitary publishes a trust center at trust.unitary.ai, linked from the unitary.ai
+  site footer as "Trust Center". The page is a Vanta-hosted Trust Report (all
+  assets served from assets.vanta.com; page title "Unitary Trust Center"). The
+  report content is rendered client-side behind Vanta's app, so specific
+  certifications could not be verified from the static page — none are asserted
+  here. The privacy policy separately documents GDPR/UK GDPR controller
+  obligations, SCCs, and the UK IDTA.
+evidence:
+  - source: https://trust.unitary.ai/
+    kind: vanta-trust-report
+    detail: HTTP 200; title "Unitary Trust Center"; stylesheets and fonts loaded from assets.vanta.com
+  - source: https://www.unitary.ai/
+    kind: footer-link
+    detail: Site footer links "Trust Center" to https://trust.unitary.ai/

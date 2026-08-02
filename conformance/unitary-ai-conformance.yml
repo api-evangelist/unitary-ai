@@ -1,0 +1,34 @@
+generated: '2026-07-21'
+method: derived
+source: openapi/unitary-ai-content-classification-openapi-original.yaml + https://docs.unitary.ai/ + https://www.unitary.ai/privacy-policy
+standards:
+  - id: oauth2
+    conforms: false
+    evidence: No oauth2 securitySchemes; auth is API key exchanged for a JWT Bearer token via POST /authenticate
+  - id: oidc
+    conforms: false
+    evidence: No openIdConnect scheme and no /.well-known/openid-configuration on any host (404/301)
+  - id: jwt-bearer-auth
+    conforms: true
+    evidence: 'openapi securityScheme JWTBearer: type http, scheme bearer, bearerFormat JWT; 24h token TTL documented'
+  - id: rfc9457-problem-details
+    conforms: false
+    evidence: Errors use FastAPI-style application/json HTTPValidationError (detail[] with loc/msg/type), not application/problem+json
+  - id: webhook-hmac-signatures
+    conforms: true
+    evidence: Webhook payloads signed with X-Hub-Signature-256 header, base64 HMAC-SHA256 with a preshared secret (https://docs.unitary.ai/api-references/integrating_webhooks)
+  - id: async-job-pattern
+    conforms: true
+    evidence: Classification endpoints return a job_id; results via GET polling or callback_url webhook delivery
+  - id: json:api
+    conforms: false
+    evidence: Plain JSON responses; no JSON:API media type
+  - id: pagination
+    conforms: false
+    evidence: Job-based API with no list endpoints; no pagination surface in the spec
+  - id: idempotency
+    conforms: false
+    evidence: No Idempotency-Key header or idempotency contract in the spec or docs
+  - id: gdpr
+    conforms: true
+    evidence: Privacy policy documents UK GDPR/GDPR controller obligations, Article 6 lawful bases, SCCs and the UK IDTA for transfers (https://www.unitary.ai/privacy-policy)

@@ -1,0 +1,45 @@
+generated: '2026-07-21'
+method: derived
+source: openapi/unitary-ai-content-classification-openapi-original.yaml
+notes: >-
+  Derived from the schemas of Unitary's content classification OpenAPI. The API is
+  job-centric: every asynchronous submission creates a classification job identified
+  by job_id, whose result payload varies by endpoint family.
+entities:
+  - name: ClassificationJob
+    id_field: job_id
+    description: Asynchronous unit of work created by every queued classification request (JobIDResponse); status exposed via AsyncResponseStatus.
+  - name: PolicyClassificationResult
+    description: Policy categories with risk levels and scores (PolicyClassificationResponse / VideoPolicyClassificationResponse; PolicyCategoryFull, PolicyCategoryRiskLevels, PolicyCategoryScores).
+  - name: ItemsCharacteristicsResult
+    description: Granular item/characteristic signals (ItemsCharacteristicsResponse / VideoItemsCharacteristicsResponse; category families FullNSFWCategory, FullViolenceCategory, FullSubstancesCategory, FullHateSymbols, FullOtherCategory, FullVisualContentCategory).
+  - name: DetoxifyResult
+    description: Text toxicity scores (DetoxifyResponse, LanguageToxicityCategory) produced by a selected DetoxifyModel.
+  - name: VideoMetadata
+    description: Media facts attached to video results (width, height, fps, duration, seconds_processed).
+  - name: VirtualModeratorCase
+    id_field: moderation_job_id
+    description: Blended AI + human moderation case (VirtualModeratorRequest / VirtualModeratorQueuedResponse) with main content (TextMainContent / MediaMainContent) and attachments (TextAttachment, LinkAttachment, MetadataAttachment, UserReportAttachment); result includes decision_type, escalate, escalate_reasons, policy_categories.
+  - name: ApiToken
+    description: 24-hour Bearer credential returned by /authenticate (LoginResponse api_token + expiry).
+relationships:
+  - from: ClassificationJob
+    to: PolicyClassificationResult
+    kind: has_one
+    via: job_id (AsyncResponse_PolicyClassificationResponse_ / AsyncResponse_VideoPolicyClassificationResponse_)
+  - from: ClassificationJob
+    to: ItemsCharacteristicsResult
+    kind: has_one
+    via: job_id (AsyncResponse_ItemsCharacteristicsResponse_ / AsyncResponse_VideoItemsCharacteristicsResponse_)
+  - from: ClassificationJob
+    to: DetoxifyResult
+    kind: has_one
+    via: job_id (AsyncResponse_DetoxifyResponse_)
+  - from: PolicyClassificationResult
+    to: VideoMetadata
+    kind: has_one
+    via: metadata (video results)
+  - from: VirtualModeratorCase
+    to: ClassificationJob
+    kind: has_one
+    via: classification_job_id (Virtual Moderator responses reference the underlying classification job)

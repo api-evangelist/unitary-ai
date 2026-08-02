@@ -1,0 +1,22 @@
+{
+  "provider": "unitary-ai",
+  "sources": [
+    "unitary-ai-api-authentication-api-openapi.yml",
+    "unitary-ai-detoxify-api-openapi.yml",
+    "unitary-ai-items-characteristics-api-openapi.yml",
+    "unitary-ai-moderation-api-openapi.yml",
+    "unitary-ai-policy-classification-api-openapi.yml"
+  ],
+  "outputs": [
+    "unitary-ai-api-authentication-api-openapi.yml",
+    "unitary-ai-detoxify-api-openapi.yml",
+    "unitary-ai-items-characteristics-api-openapi.yml",
+    "unitary-ai-moderation-api-openapi.yml",
+    "unitary-ai-policy-classification-api-openapi.yml"
+  ],
+  "archived": [],
+  "errors": [],
+  "warnings": [],
+  "notes": [],
+  "skipped": []
+}

@@ -1,0 +1,23 @@
+generated: '2026-07-21'
+method: searched
+source: https://pypi.org/project/detoxify/
+notes: >-
+  Unitary publishes no API-client SDKs on the public registries (npm, PyPI, Maven
+  Central, NuGet, pkg.go.dev, RubyGems, Packagist, crates.io were checked for
+  unitary/unitaryai-scoped client libraries). The one first-party package is
+  detoxify, an open-source Python library that runs Unitary's Detoxify toxic-comment
+  models locally — the same model family the hosted /detoxify API endpoints expose.
+  It is a model library, not an API client, so no SDKs pointer is emitted.
+  API access itself is via plain HTTPS (docs show curl, Python requests, and
+  Node fetch examples rather than a packaged SDK).
+packages:
+  - language: python
+    registry: pypi
+    name: detoxify
+    url: https://pypi.org/project/detoxify/
+    install: pip install detoxify
+    official: true
+    latest_version: 0.5.2
+    kind: model-library
+    description: A python library for detecting toxic comments (Unitary's open-source Detoxify models)
+    repository: https://github.com/unitaryai/detoxify

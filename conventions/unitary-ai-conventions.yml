@@ -1,0 +1,47 @@
+generated: '2026-07-21'
+method: searched
+source: https://docs.unitary.ai/ (authentication, features-and-requirements, integrating_webhooks, unitary-source-ips) + openapi/unitary-ai-content-classification-openapi-original.yaml
+authentication:
+  style: api-key exchanged for short-lived JWT Bearer token
+  flow: POST https://api.unitary.ai/v1/authenticate with form field key={API_KEY} returns {api_token, expiry}; send Authorization Bearer {api_token} on all other requests
+  token_ttl: 24h (default); re-use until expiry — /authenticate is rate-limited
+  artifact: authentication/unitary-ai-authentication.yml
+idempotency:
+  supported: false
+  notes: No idempotency-key header or retry-safety contract is documented; async job submission is not documented as idempotent.
+pagination:
+  style: none
+  notes: Job-based API — submit content, then poll GET /{job_id} endpoints or receive a webhook; no list/collection endpoints.
+async_jobs:
+  pattern: submit-then-poll-or-webhook
+  submit: POST classification endpoints return a job_id (JobIDResponse)
+  poll: GET /classify/policy/{image|video}/{job_id}, /classify/items-characteristics/{image|video}/{job_id}, /detoxify/text/{job_id}
+  webhook: preferred — include callback_url in the request body; results POSTed to it when the job completes
+  sync_addons: /classify/policy/image/now and /classify/policy/video/now return results immediately (add-on synchronous endpoints)
+webhooks:
+  signature_header: X-Hub-Signature-256
+  algorithm: HMAC-SHA256, base64-encoded, preshared secret issued with the API key; header absent when no secret is set
+  custom_data: append query parameters to callback_url (echoed back in the payload)
+  artifact: asyncapi/unitary-ai-webhooks.yml
+request_semantics:
+  content_types: application/x-www-form-urlencoded and multipart/form-data for submissions; media preferably passed as a url field (pre-signed object-storage URLs supported)
+  media_limits: video 200MB / 3 min (.mp4 .mpeg .webm .mov .mkv .gif .m4v); image 10MB (.png .jpeg); text 256KB; Virtual Moderator payload 200KiB total, 100KiB per attachment
+  recommended_resolution: 336-1200 pixels per side
+versioning:
+  scheme: uri-path
+  current: v1
+  artifact: lifecycle/unitary-ai-lifecycle.yml
+error_envelope:
+  sync: 'FastAPI-style: 422 HTTPValidationError with detail[] {loc, msg, type}; 404 on unknown job_id'
+  async: 'webhook payload {data: {job_id, is_error, result: {error}}}'
+  artifact: errors/unitary-ai-problem-types.yml
+rate_limits:
+  documented: partial
+  notes: /authenticate is explicitly rate-limited (no numeric limits or rate-limit headers published); no other endpoint limits documented.
+network:
+  source_ips: https://docs.unitary.ai/unitary-source-ips (US region 16 IPs, EU region 3 IPs) for allowlisting webhook/resource-fetch traffic
+request_tracing:
+  header: none documented
+metadata:
+  supported: false
+  notes: No metadata or field-expansion conventions; responses include media metadata (width/height/fps/duration/seconds_processed) on video results.

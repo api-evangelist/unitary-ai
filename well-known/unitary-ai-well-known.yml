@@ -1,0 +1,48 @@
+generated: '2026-07-21'
+method: searched
+notes: >-
+  No /.well-known/ discovery documents are published. api.unitary.ai is fronted by
+  Kong (x-kong-response-latency header) behind Cloudflare and 301-redirects every
+  unmatched path, including all /.well-known/ paths, to https://unitary.ai — recorded
+  as 301 (no document). The docs host does publish /llms.txt (captured verbatim in
+  llms/unitary-ai-docs-llms.txt).
+hosts:
+  - host: https://www.unitary.ai
+    documents:
+      - path: /.well-known/security.txt
+        status: 404
+      - path: /.well-known/openid-configuration
+        status: 404
+      - path: /.well-known/oauth-authorization-server
+        status: 404
+      - path: /.well-known/api-catalog
+        status: 404
+      - path: /.well-known/ai-plugin.json
+        status: 404
+  - host: https://docs.unitary.ai
+    documents:
+      - path: /.well-known/security.txt
+        status: 404
+      - path: /.well-known/openid-configuration
+        status: 404
+      - path: /.well-known/oauth-authorization-server
+        status: 404
+      - path: /.well-known/api-catalog
+        status: 404
+      - path: /.well-known/ai-plugin.json
+        status: 404
+      - path: /llms.txt
+        status: 200
+        file: ../llms/unitary-ai-docs-llms.txt
+  - host: https://api.unitary.ai
+    documents:
+      - path: /.well-known/security.txt
+        status: 301
+      - path: /.well-known/openid-configuration
+        status: 301
+      - path: /.well-known/oauth-authorization-server
+        status: 301
+      - path: /.well-known/api-catalog
+        status: 301
+      - path: /.well-known/ai-plugin.json
+        status: 301
