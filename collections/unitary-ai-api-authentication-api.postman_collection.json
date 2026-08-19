@@ -1,0 +1,178 @@
+{
+  "item": [
+    {
+      "id": "b3c54437-61c5-49a9-ae0f-3e167c28599b",
+      "name": "API Authentication",
+      "description": {
+        "content": "",
+        "type": "text/plain"
+      },
+      "item": [
+        {
+          "id": "3411dbf3-901b-4d94-99ac-8d8f5306d850",
+          "name": "Authenticate with API Key to obtain an API token",
+          "request": {
+            "name": "Authenticate with API Key to obtain an API token",
+            "description": {
+              "content": "Clients wishing to interact with the Unitary API must first authenticate by calling this endpoint with a valid API Key in the request body.\n\nThe resulting `api_token` should be used in subsequent API requests by including a header with the format:\n```\nAuthorization: Bearer {api_token}\n```\n\nThe `api_token` will be valid for a period of time (default 24 hours) and should be used for all subsequent API requests until it expires, or is invalidated.\n\n**This endpoint is rate-limited and may return error codes if too many authentication requests are submitted within a short time frame. For this reason clients should avoid re-authenticating too often.**",
+              "type": "text/plain"
+            },
+            "url": {
+              "path": [
+                "authenticate"
+              ],
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "query": [],
+              "variable": []
+            },
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/x-www-form-urlencoded"
+              },
+              {
+                "key": "Accept",
+                "value": "application/json"
+              }
+            ],
+            "method": "POST",
+            "auth": null,
+            "body": {
+              "mode": "urlencoded",
+              "urlencoded": [
+                {
+                  "disabled": false,
+                  "key": "key",
+                  "value": "<password>",
+                  "description": "(Required) "
+                }
+              ]
+            }
+          },
+          "response": [
+            {
+              "id": "97086480-3642-4cdf-8c3b-2a5a72f5eddb",
+              "name": "Successful Response",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "authenticate"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [],
+                  "variable": []
+                },
+                "header": [
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  }
+                ],
+                "method": "POST",
+                "body": {
+                  "mode": "urlencoded",
+                  "urlencoded": [
+                    {
+                      "disabled": false,
+                      "description": {
+                        "content": "(Required) ",
+                        "type": "text/plain"
+                      },
+                      "key": "key",
+                      "value": "<password>"
+                    }
+                  ]
+                }
+              },
+              "status": "OK",
+              "code": 200,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"api_token\": \"string\",\n  \"expiry\": \"2013-09-01T08:05:35.736Z\"\n}",
+              "cookie": [],
+              "_postman_previewlanguage": "json"
+            },
+            {
+              "id": "bde29a09-1696-4c24-9dc0-0b4dbc54bd1f",
+              "name": "Validation Error",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "authenticate"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [],
+                  "variable": []
+                },
+                "header": [
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  }
+                ],
+                "method": "POST",
+                "body": {
+                  "mode": "urlencoded",
+                  "urlencoded": [
+                    {
+                      "disabled": false,
+                      "description": {
+                        "content": "(Required) ",
+                        "type": "text/plain"
+                      },
+                      "key": "key",
+                      "value": "<password>"
+                    }
+                  ]
+                }
+              },
+              "status": "Unprocessable Entity (WebDAV) (RFC 4918)",
+              "code": 422,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"detail\": [\n    {\n      \"loc\": [\n        \"string\",\n        \"string\"\n      ],\n      \"msg\": \"string\",\n      \"type\": \"string\"\n    },\n    {\n      \"loc\": [\n        \"string\",\n        \"string\"\n      ],\n      \"msg\": \"string\",\n      \"type\": \"string\"\n    }\n  ]\n}",
+              "cookie": [],
+              "_postman_previewlanguage": "json"
+            }
+          ],
+          "event": [],
+          "protocolProfileBehavior": {
+            "disableBodyPruning": true
+          }
+        }
+      ],
+      "event": []
+    }
+  ],
+  "event": [],
+  "variable": [
+    {
+      "type": "string",
+      "value": "/",
+      "key": "baseUrl"
+    }
+  ],
+  "info": {
+    "_postman_id": "6b1ddfa8-0277-4a3d-bdf0-e9d321a7dc2c",
+    "name": "Unitary content classification API Authentication API",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+    "description": {
+      "content": "\nThis API is for classifying image and video files to detect various types of potentially harmful content.\n\n## Before you start:\n- You will need an API key to access this API. Please email contact@unitary.ai to obtain one.\n- If using the webhooks function then a preshared secret will also be required.\n\n\n## API Authentication\n\nAll API requests (except to /authenticate) require a valid API token in the `Authorization` header.\nTo obtain an API token you should POST to /authenticate with your API key.\n\nAPI Tokens will be valid for a period of time (default 24h) and should be re-used until they expire or are invalidated.\nPlease note that the /authenticate endpoint is rate-limited and excessive requests will return errors.\n\n## Submitting media for classification\n\nUnitary's API accepts files for the image/video endpoints and free text on the detoxify endpoint.\nThe files or texts are submitted to the aforementioned endpoints for asynchronous classification returning a `job_id`\nassociated with each request.\n\nMedia files can either be sent as multi-part form uploads, or preferably by including a `url` field in the request where the media file can be downloaded from. Presigned object-storage URLs are supported.\n\n### Current limitations\nTo ensure high quality and speed in our responses, we have a few limitations on the size and type of media we process. Please let us know if any of these limitations represent an issue for you. We are more than happy to reevaluate our solution to meet your needs.\n- The maximum allowed image size is 10 MB The maximum allowed video size is 200 MB. Requests made with media files larger than the limits specified may not be processed.\n- The image formats we support are .png and .jpeg\n- The video formats we support are .Mp4, Mpeg, Webm, Mov, Mkv, M4v\n\n## Receiving classification results\n\nFor receiving results we support multiple methods:\n\n- The preferred method is to utilise the webhook function by including a `callback_url` parameter in the classification request. Results will be delivered by a POST request to the `callback_url` as soon as the resource is classified.\n- Results can also be retrieved by polling the GET endpoints. This method may be inconvenient as processing can take multiple hours.\n\n",
+      "type": "text/plain"
+    }
+  }
+}

@@ -1,0 +1,1112 @@
+{
+  "item": [
+    {
+      "id": "651dbc78-f5da-4dc8-b19f-bcb00a61418d",
+      "name": "Items & Characteristics",
+      "description": {
+        "content": "",
+        "type": "text/plain"
+      },
+      "item": [
+        {
+          "id": "28793a44-ffdf-4d24-8253-d57c1612474d",
+          "name": "Queue an image for Items & Characteristics classification",
+          "request": {
+            "name": "Queue an image for Items & Characteristics classification",
+            "description": {
+              "content": "This endpoint queues a job that predicts the Items & Characteristics categories of a single image.\n\nThe request must contain either a file (a multi-part form encoded image file) or a `url` form field (a string containing a URL to download the image file from).\n\nExample CURL:\n```\ncurl --location --request POST https://api.unitary.ai/v1/classify/items-characteristics/image --header \"Authorization: Bearer {API_TOKEN}\" --header \"Content-Type: multipart/form-data\" --form \"url={RESOURCE_URL}\"\n```\n\nA job ID will be returned in the response.\n\nIf a `callback_url` form field is included in the request then the results webhook will be sent as a POST request to this URL once the image has been classified.\n\nAlternatively results can be obtained by making a GET request to the results endpoint using the job ID.\n\n**Webhooks should be implemented for any use of this endpoint at scale to prevent unnecessary polling of the results endpoint.**",
+              "type": "text/plain"
+            },
+            "url": {
+              "path": [
+                "classify",
+                "items-characteristics",
+                "image"
+              ],
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "query": [],
+              "variable": []
+            },
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "multipart/form-data"
+              },
+              {
+                "key": "Accept",
+                "value": "application/json"
+              }
+            ],
+            "method": "POST",
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{bearerToken}}"
+                }
+              ]
+            },
+            "body": {
+              "mode": "formdata",
+              "formdata": [
+                {
+                  "key": "callback_url",
+                  "value": "<uri>",
+                  "type": "text",
+                  "description": ""
+                },
+                {
+                  "key": "caption",
+                  "value": "<string>",
+                  "type": "text",
+                  "description": ""
+                },
+                {
+                  "key": "file",
+                  "type": "file",
+                  "description": ""
+                },
+                {
+                  "key": "url",
+                  "value": "<uri>",
+                  "type": "text",
+                  "description": ""
+                }
+              ]
+            }
+          },
+          "response": [
+            {
+              "id": "e01fb4e9-8b47-4a39-afbb-3a7088b42e92",
+              "name": "Successful Response",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "classify",
+                    "items-characteristics",
+                    "image"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [],
+                  "variable": []
+                },
+                "header": [
+                  {
+                    "description": {
+                      "content": "Added as a part of security scheme: bearer",
+                      "type": "text/plain"
+                    },
+                    "key": "Authorization",
+                    "value": "Bearer <token>"
+                  },
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  }
+                ],
+                "method": "POST",
+                "body": {
+                  "mode": "formdata",
+                  "formdata": [
+                    {
+                      "description": {
+                        "content": "",
+                        "type": "text/plain"
+                      },
+                      "key": "callback_url",
+                      "value": "<uri>",
+                      "type": "text"
+                    },
+                    {
+                      "description": {
+                        "content": "",
+                        "type": "text/plain"
+                      },
+                      "key": "caption",
+                      "value": "<string>",
+                      "type": "text"
+                    },
+                    {
+                      "description": {
+                        "content": "",
+                        "type": "text/plain"
+                      },
+                      "key": "file",
+                      "value": "<binary>",
+                      "type": "text"
+                    },
+                    {
+                      "description": {
+                        "content": "",
+                        "type": "text/plain"
+                      },
+                      "key": "url",
+                      "value": "<uri>",
+                      "type": "text"
+                    }
+                  ]
+                }
+              },
+              "status": "OK",
+              "code": 200,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"job_id\": \"string\"\n}",
+              "cookie": [],
+              "_postman_previewlanguage": "json"
+            },
+            {
+              "id": "799721a6-5498-4476-b84f-0b650df8e5b1",
+              "name": "Not found",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "classify",
+                    "items-characteristics",
+                    "image"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [],
+                  "variable": []
+                },
+                "header": [
+                  {
+                    "description": {
+                      "content": "Added as a part of security scheme: bearer",
+                      "type": "text/plain"
+                    },
+                    "key": "Authorization",
+                    "value": "Bearer <token>"
+                  }
+                ],
+                "method": "POST",
+                "body": {
+                  "mode": "formdata",
+                  "formdata": [
+                    {
+                      "description": {
+                        "content": "",
+                        "type": "text/plain"
+                      },
+                      "key": "callback_url",
+                      "value": "<uri>",
+                      "type": "text"
+                    },
+                    {
+                      "description": {
+                        "content": "",
+                        "type": "text/plain"
+                      },
+                      "key": "caption",
+                      "value": "<string>",
+                      "type": "text"
+                    },
+                    {
+                      "description": {
+                        "content": "",
+                        "type": "text/plain"
+                      },
+                      "key": "file",
+                      "value": "<binary>",
+                      "type": "text"
+                    },
+                    {
+                      "description": {
+                        "content": "",
+                        "type": "text/plain"
+                      },
+                      "key": "url",
+                      "value": "<uri>",
+                      "type": "text"
+                    }
+                  ]
+                }
+              },
+              "status": "Not Found",
+              "code": 404,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "text/plain"
+                }
+              ],
+              "body": "",
+              "cookie": [],
+              "_postman_previewlanguage": "text"
+            },
+            {
+              "id": "afefbf5f-6b24-4366-9c67-0b821a95398b",
+              "name": "Validation Error",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "classify",
+                    "items-characteristics",
+                    "image"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [],
+                  "variable": []
+                },
+                "header": [
+                  {
+                    "description": {
+                      "content": "Added as a part of security scheme: bearer",
+                      "type": "text/plain"
+                    },
+                    "key": "Authorization",
+                    "value": "Bearer <token>"
+                  },
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  }
+                ],
+                "method": "POST",
+                "body": {
+                  "mode": "formdata",
+                  "formdata": [
+                    {
+                      "description": {
+                        "content": "",
+                        "type": "text/plain"
+                      },
+                      "key": "callback_url",
+                      "value": "<uri>",
+                      "type": "text"
+                    },
+                    {
+                      "description": {
+                        "content": "",
+                        "type": "text/plain"
+                      },
+                      "key": "caption",
+                      "value": "<string>",
+                      "type": "text"
+                    },
+                    {
+                      "description": {
+                        "content": "",
+                        "type": "text/plain"
+                      },
+                      "key": "file",
+                      "value": "<binary>",
+                      "type": "text"
+                    },
+                    {
+                      "description": {
+                        "content": "",
+                        "type": "text/plain"
+                      },
+                      "key": "url",
+                      "value": "<uri>",
+                      "type": "text"
+                    }
+                  ]
+                }
+              },
+              "status": "Unprocessable Entity (WebDAV) (RFC 4918)",
+              "code": 422,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"detail\": [\n    {\n      \"loc\": [\n        \"string\",\n        \"string\"\n      ],\n      \"msg\": \"string\",\n      \"type\": \"string\"\n    },\n    {\n      \"loc\": [\n        \"string\",\n        \"string\"\n      ],\n      \"msg\": \"string\",\n      \"type\": \"string\"\n    }\n  ]\n}",
+              "cookie": [],
+              "_postman_previewlanguage": "json"
+            }
+          ],
+          "event": [],
+          "protocolProfileBehavior": {
+            "disableBodyPruning": true
+          }
+        },
+        {
+          "id": "9ad40ed2-74dd-4e4d-96bc-1b744675cac4",
+          "name": "Retrieve the results of a queued Items & Characteristics classification",
+          "request": {
+            "name": "Retrieve the results of a queued Items & Characteristics classification",
+            "description": {
+              "content": "This endpoint returns the results of a previously queued classify job.\n\nThe response for each item is a prevalence score between 0 and 1 that represents how present it is in the content. 1 is highest prevalence and 0 is lowest prevalence.\n\nYou can use these scores in mappings or models to implement safety policies, for example setting a numerical threshold for automated flagging of content or in a linear regression model.\n\nNote that the score meaning and distribution is different for each item: for example, a 0.7 for `pepe` won't translate to the same likelihood of harmful content as a 0.7 for `confederate flag`.\nTherefore you should calculate an individual threshold for each item. For best performance, we suggest calculating a threshold using labelled data, optimising for the balance of precision and\nrecall best suited to your needs. The Unitary team is happy to provide guidance on this process.",
+              "type": "text/plain"
+            },
+            "url": {
+              "path": [
+                "classify",
+                "items-characteristics",
+                "image",
+                ":job_id"
+              ],
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "query": [],
+              "variable": [
+                {
+                  "disabled": false,
+                  "type": "any",
+                  "value": "<uuid4>",
+                  "key": "job_id",
+                  "description": "(Required) "
+                }
+              ]
+            },
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              }
+            ],
+            "method": "GET",
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{bearerToken}}"
+                }
+              ]
+            }
+          },
+          "response": [
+            {
+              "id": "20cac721-7a57-43ba-afc2-25da2ebe0d82",
+              "name": "Successful Response",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "classify",
+                    "items-characteristics",
+                    "image",
+                    ":job_id"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [],
+                  "variable": [
+                    {
+                      "disabled": false,
+                      "type": "any",
+                      "value": "<uuid4>",
+                      "key": "job_id",
+                      "description": "(Required) "
+                    }
+                  ]
+                },
+                "header": [
+                  {
+                    "description": {
+                      "content": "Added as a part of security scheme: bearer",
+                      "type": "text/plain"
+                    },
+                    "key": "Authorization",
+                    "value": "Bearer <token>"
+                  },
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  }
+                ],
+                "method": "GET",
+                "body": {}
+              },
+              "status": "OK",
+              "code": 200,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"status\": \"string\",\n  \"results\": {\n    \"violence\": {\n      \"violence\": 0.54324,\n      \"firearm\": 0.54324,\n      \"knife\": 0.54324,\n      \"violent_knife\": 0.54324\n    },\n    \"substances\": {\n      \"alcohol\": 0.54324,\n      \"drink\": 0.54324,\n      \"smoking_and_tobacco\": 0.54324,\n      \"marijuana\": 0.54324,\n      \"pills\": 0.54324,\n      \"recreational_pills\": 0.54324\n    },\n    \"nsfw\": {\n      \"adult_content\": 0.54324,\n      \"suggestive\": 0.54324,\n      \"adult_toys\": 0.54324,\n      \"medical\": 0.54324,\n      \"over_18\": 0.54324,\n      \"exposed_anus\": 0.54324,\n      \"exposed_armpits\": 0.54324,\n      \"exposed_belly\": 0.54324,\n      \"covered_belly\": 0.54324,\n      \"covered_buttocks\": 0.54324,\n      \"exposed_buttocks\": 0.54324,\n      \"covered_feet\": 0.54324,\n      \"exposed_feet\": 0.54324,\n      \"covered_breast_f\": 0.54324,\n      \"exposed_breast_f\": 0.54324,\n      \"covered_genitalia_f\": 0.54324,\n      \"exposed_genitalia_f\": 0.54324,\n      \"exposed_breast_m\": 0.54324,\n      \"exposed_genitalia_m\": 0.54324\n    },\n    \"hate_symbols\": {\n      \"confederate_flag\": 0.54324,\n      \"pepe_frog\": 0.54324,\n      \"nazi_swastika\": 0.54324\n    },\n    \"visual_content\": {\n      \"artistic\": 0.54324,\n      \"comic\": 0.54324,\n      \"meme\": 0.54324,\n      \"screenshot\": 0.54324,\n      \"map\": 0.54324,\n      \"poster_cover\": 0.54324,\n      \"game_screenshot\": 0.54324,\n      \"face_filter\": 0.54324,\n      \"promo_info_graphic\": 0.54324,\n      \"photo\": 0.54324\n    },\n    \"other\": {\n      \"child\": 0.54324,\n      \"middle_finger_gesture\": 0.54324,\n      \"toy\": 0.54324,\n      \"gambling_machine\": 0.54324,\n      \"face_f\": 0.54324,\n      \"face_m\": 0.54324\n    },\n    \"ocr_language_toxicity\": {\n      \"toxicity\": 0.54324,\n      \"severe_toxicity\": 0.54324,\n      \"obscene\": 0.54324,\n      \"insult\": 0.54324,\n      \"identity_attack\": 0.54324,\n      \"threat\": 0.54324,\n      \"sexual_explicit\": 0.54324\n    },\n    \"audio_language_toxicity\": {\n      \"toxicity\": 0.54324,\n      \"severe_toxicity\": 0.54324,\n      \"obscene\": 0.54324,\n      \"insult\": 0.54324,\n      \"identity_attack\": 0.54324,\n      \"threat\": 0.54324,\n      \"sexual_explicit\": 0.54324\n    },\n    \"caption_language_toxicity\": {\n      \"toxicity\": 0.54324,\n      \"severe_toxicity\": 0.54324,\n      \"obscene\": 0.54324,\n      \"insult\": 0.54324,\n      \"identity_attack\": 0.54324,\n      \"threat\": 0.54324,\n      \"sexual_explicit\": 0.54324\n    },\n    \"ocr_texts\": [\n      \"string\",\n      \"string\"\n    ],\n    \"audio_texts\": [\n      \"string\",\n      \"string\"\n    ],\n    \"url\": \"http://THX.qiyDP4\"\n  },\n  \"msg\": \"string\"\n}",
+              "cookie": [],
+              "_postman_previewlanguage": "json"
+            },
+            {
+              "id": "9db0fd26-1d27-4a6e-a815-1a1acf1df055",
+              "name": "Not found",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "classify",
+                    "items-characteristics",
+                    "image",
+                    ":job_id"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [],
+                  "variable": [
+                    {
+                      "disabled": false,
+                      "type": "any",
+                      "value": "<uuid4>",
+                      "key": "job_id",
+                      "description": "(Required) "
+                    }
+                  ]
+                },
+                "header": [
+                  {
+                    "description": {
+                      "content": "Added as a part of security scheme: bearer",
+                      "type": "text/plain"
+                    },
+                    "key": "Authorization",
+                    "value": "Bearer <token>"
+                  }
+                ],
+                "method": "GET",
+                "body": {}
+              },
+              "status": "Not Found",
+              "code": 404,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "text/plain"
+                }
+              ],
+              "body": "",
+              "cookie": [],
+              "_postman_previewlanguage": "text"
+            },
+            {
+              "id": "c0186c66-3f46-4317-a746-223dc0d2ce86",
+              "name": "Validation Error",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "classify",
+                    "items-characteristics",
+                    "image",
+                    ":job_id"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [],
+                  "variable": [
+                    {
+                      "disabled": false,
+                      "type": "any",
+                      "value": "<uuid4>",
+                      "key": "job_id",
+                      "description": "(Required) "
+                    }
+                  ]
+                },
+                "header": [
+                  {
+                    "description": {
+                      "content": "Added as a part of security scheme: bearer",
+                      "type": "text/plain"
+                    },
+                    "key": "Authorization",
+                    "value": "Bearer <token>"
+                  },
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  }
+                ],
+                "method": "GET",
+                "body": {}
+              },
+              "status": "Unprocessable Entity (WebDAV) (RFC 4918)",
+              "code": 422,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"detail\": [\n    {\n      \"loc\": [\n        \"string\",\n        \"string\"\n      ],\n      \"msg\": \"string\",\n      \"type\": \"string\"\n    },\n    {\n      \"loc\": [\n        \"string\",\n        \"string\"\n      ],\n      \"msg\": \"string\",\n      \"type\": \"string\"\n    }\n  ]\n}",
+              "cookie": [],
+              "_postman_previewlanguage": "json"
+            }
+          ],
+          "event": [],
+          "protocolProfileBehavior": {
+            "disableBodyPruning": true
+          }
+        },
+        {
+          "id": "1adbfd36-c121-457a-8265-ee774562c86e",
+          "name": "Queue a video for Items & Characteristics classification",
+          "request": {
+            "name": "Queue a video for Items & Characteristics classification",
+            "description": {
+              "content": "This endpoint queues a job that predicts the Items & Characteristics categories of a single video.\n\nThe request must contain either a file (a multi-part form encoded video file) or a `url` form field (a string containing a URL to download the video file from).\n\nExample CURL:\n```\ncurl --location --request POST https://api.unitary.ai/v1/classify/items-characteristics/video --header \"Authorization: Bearer {API_TOKEN}\" --header \"Content-Type: multipart/form-data\" --form \"url={RESOURCE_URL}\"\n```\n\nA job ID will be returned in the response.\n\nIf a `callback_url` form field is included in the request then the results webhook will be sent as a POST request to this URL once the image has been classified.\n\nAlternatively results can be obtained by making a GET request to the results endpoint using the job ID.\n\n**Webhooks should be implemented for any use of this endpoint at scale to prevent unnecessary polling of the results endpoint.**",
+              "type": "text/plain"
+            },
+            "url": {
+              "path": [
+                "classify",
+                "items-characteristics",
+                "video"
+              ],
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "query": [],
+              "variable": []
+            },
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "multipart/form-data"
+              },
+              {
+                "key": "Accept",
+                "value": "application/json"
+              }
+            ],
+            "method": "POST",
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{bearerToken}}"
+                }
+              ]
+            },
+            "body": {
+              "mode": "formdata",
+              "formdata": [
+                {
+                  "key": "callback_url",
+                  "value": "<uri>",
+                  "type": "text",
+                  "description": ""
+                },
+                {
+                  "key": "caption",
+                  "value": "<string>",
+                  "type": "text",
+                  "description": ""
+                },
+                {
+                  "key": "file",
+                  "type": "file",
+                  "description": ""
+                },
+                {
+                  "key": "url",
+                  "value": "<uri>",
+                  "type": "text",
+                  "description": ""
+                }
+              ]
+            }
+          },
+          "response": [
+            {
+              "id": "1d72e3df-405e-4221-8fdb-571ff4c30271",
+              "name": "Successful Response",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "classify",
+                    "items-characteristics",
+                    "video"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [],
+                  "variable": []
+                },
+                "header": [
+                  {
+                    "description": {
+                      "content": "Added as a part of security scheme: bearer",
+                      "type": "text/plain"
+                    },
+                    "key": "Authorization",
+                    "value": "Bearer <token>"
+                  },
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  }
+                ],
+                "method": "POST",
+                "body": {
+                  "mode": "formdata",
+                  "formdata": [
+                    {
+                      "description": {
+                        "content": "",
+                        "type": "text/plain"
+                      },
+                      "key": "callback_url",
+                      "value": "<uri>",
+                      "type": "text"
+                    },
+                    {
+                      "description": {
+                        "content": "",
+                        "type": "text/plain"
+                      },
+                      "key": "caption",
+                      "value": "<string>",
+                      "type": "text"
+                    },
+                    {
+                      "description": {
+                        "content": "",
+                        "type": "text/plain"
+                      },
+                      "key": "file",
+                      "value": "<binary>",
+                      "type": "text"
+                    },
+                    {
+                      "description": {
+                        "content": "",
+                        "type": "text/plain"
+                      },
+                      "key": "url",
+                      "value": "<uri>",
+                      "type": "text"
+                    }
+                  ]
+                }
+              },
+              "status": "OK",
+              "code": 200,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"job_id\": \"string\"\n}",
+              "cookie": [],
+              "_postman_previewlanguage": "json"
+            },
+            {
+              "id": "f7cb4d61-d83c-4554-abe4-0f3cd47c5163",
+              "name": "Not found",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "classify",
+                    "items-characteristics",
+                    "video"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [],
+                  "variable": []
+                },
+                "header": [
+                  {
+                    "description": {
+                      "content": "Added as a part of security scheme: bearer",
+                      "type": "text/plain"
+                    },
+                    "key": "Authorization",
+                    "value": "Bearer <token>"
+                  }
+                ],
+                "method": "POST",
+                "body": {
+                  "mode": "formdata",
+                  "formdata": [
+                    {
+                      "description": {
+                        "content": "",
+                        "type": "text/plain"
+                      },
+                      "key": "callback_url",
+                      "value": "<uri>",
+                      "type": "text"
+                    },
+                    {
+                      "description": {
+                        "content": "",
+                        "type": "text/plain"
+                      },
+                      "key": "caption",
+                      "value": "<string>",
+                      "type": "text"
+                    },
+                    {
+                      "description": {
+                        "content": "",
+                        "type": "text/plain"
+                      },
+                      "key": "file",
+                      "value": "<binary>",
+                      "type": "text"
+                    },
+                    {
+                      "description": {
+                        "content": "",
+                        "type": "text/plain"
+                      },
+                      "key": "url",
+                      "value": "<uri>",
+                      "type": "text"
+                    }
+                  ]
+                }
+              },
+              "status": "Not Found",
+              "code": 404,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "text/plain"
+                }
+              ],
+              "body": "",
+              "cookie": [],
+              "_postman_previewlanguage": "text"
+            },
+            {
+              "id": "67cc8cf5-dd0a-4df5-880b-e3aac2c5fd1b",
+              "name": "Validation Error",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "classify",
+                    "items-characteristics",
+                    "video"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [],
+                  "variable": []
+                },
+                "header": [
+                  {
+                    "description": {
+                      "content": "Added as a part of security scheme: bearer",
+                      "type": "text/plain"
+                    },
+                    "key": "Authorization",
+                    "value": "Bearer <token>"
+                  },
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  }
+                ],
+                "method": "POST",
+                "body": {
+                  "mode": "formdata",
+                  "formdata": [
+                    {
+                      "description": {
+                        "content": "",
+                        "type": "text/plain"
+                      },
+                      "key": "callback_url",
+                      "value": "<uri>",
+                      "type": "text"
+                    },
+                    {
+                      "description": {
+                        "content": "",
+                        "type": "text/plain"
+                      },
+                      "key": "caption",
+                      "value": "<string>",
+                      "type": "text"
+                    },
+                    {
+                      "description": {
+                        "content": "",
+                        "type": "text/plain"
+                      },
+                      "key": "file",
+                      "value": "<binary>",
+                      "type": "text"
+                    },
+                    {
+                      "description": {
+                        "content": "",
+                        "type": "text/plain"
+                      },
+                      "key": "url",
+                      "value": "<uri>",
+                      "type": "text"
+                    }
+                  ]
+                }
+              },
+              "status": "Unprocessable Entity (WebDAV) (RFC 4918)",
+              "code": 422,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"detail\": [\n    {\n      \"loc\": [\n        \"string\",\n        \"string\"\n      ],\n      \"msg\": \"string\",\n      \"type\": \"string\"\n    },\n    {\n      \"loc\": [\n        \"string\",\n        \"string\"\n      ],\n      \"msg\": \"string\",\n      \"type\": \"string\"\n    }\n  ]\n}",
+              "cookie": [],
+              "_postman_previewlanguage": "json"
+            }
+          ],
+          "event": [],
+          "protocolProfileBehavior": {
+            "disableBodyPruning": true
+          }
+        },
+        {
+          "id": "7ed04eea-b16c-4998-a2aa-795c1af0e643",
+          "name": "Retrieve the results of a queued Items & Characteristics classification",
+          "request": {
+            "name": "Retrieve the results of a queued Items & Characteristics classification",
+            "description": {
+              "content": "This endpoint returns the results of a previously queued classify job.\n\nThe response for each item is a prevalence score between 0 and 1 that represents how present it is in the content. 1 is highest prevalence and 0 is lowest prevalence.\n\nYou can use these scores in mappings or models to implement safety policies, for example setting a numerical threshold for automated flagging of content or in a linear regression model.\n\nNote that the score meaning and distribution is different for each item: for example, a 0.7 for `pepe` won't translate to the same likelihood of harmful content as a 0.7 for `confederate flag`.\nTherefore you should calculate an individual threshold for each item. For best performance, we suggest calculating a threshold using labelled data, optimising for the balance of precision and\nrecall best suited to your needs. The Unitary team is happy to provide guidance on this process.",
+              "type": "text/plain"
+            },
+            "url": {
+              "path": [
+                "classify",
+                "items-characteristics",
+                "video",
+                ":job_id"
+              ],
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "query": [],
+              "variable": [
+                {
+                  "disabled": false,
+                  "type": "any",
+                  "value": "<uuid4>",
+                  "key": "job_id",
+                  "description": "(Required) "
+                }
+              ]
+            },
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              }
+            ],
+            "method": "GET",
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{bearerToken}}"
+                }
+              ]
+            }
+          },
+          "response": [
+            {
+              "id": "5812af49-e576-43ae-8e6a-8810d8ed1663",
+              "name": "Successful Response",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "classify",
+                    "items-characteristics",
+                    "video",
+                    ":job_id"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [],
+                  "variable": [
+                    {
+                      "disabled": false,
+                      "type": "any",
+                      "value": "<uuid4>",
+                      "key": "job_id",
+                      "description": "(Required) "
+                    }
+                  ]
+                },
+                "header": [
+                  {
+                    "description": {
+                      "content": "Added as a part of security scheme: bearer",
+                      "type": "text/plain"
+                    },
+                    "key": "Authorization",
+                    "value": "Bearer <token>"
+                  },
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  }
+                ],
+                "method": "GET",
+                "body": {}
+              },
+              "status": "OK",
+              "code": 200,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"status\": \"string\",\n  \"results\": {\n    \"violence\": {\n      \"violence\": 0.54324,\n      \"firearm\": 0.54324,\n      \"knife\": 0.54324,\n      \"violent_knife\": 0.54324\n    },\n    \"substances\": {\n      \"alcohol\": 0.54324,\n      \"drink\": 0.54324,\n      \"smoking_and_tobacco\": 0.54324,\n      \"marijuana\": 0.54324,\n      \"pills\": 0.54324,\n      \"recreational_pills\": 0.54324\n    },\n    \"nsfw\": {\n      \"adult_content\": 0.54324,\n      \"suggestive\": 0.54324,\n      \"adult_toys\": 0.54324,\n      \"medical\": 0.54324,\n      \"over_18\": 0.54324,\n      \"exposed_anus\": 0.54324,\n      \"exposed_armpits\": 0.54324,\n      \"exposed_belly\": 0.54324,\n      \"covered_belly\": 0.54324,\n      \"covered_buttocks\": 0.54324,\n      \"exposed_buttocks\": 0.54324,\n      \"covered_feet\": 0.54324,\n      \"exposed_feet\": 0.54324,\n      \"covered_breast_f\": 0.54324,\n      \"exposed_breast_f\": 0.54324,\n      \"covered_genitalia_f\": 0.54324,\n      \"exposed_genitalia_f\": 0.54324,\n      \"exposed_breast_m\": 0.54324,\n      \"exposed_genitalia_m\": 0.54324\n    },\n    \"hate_symbols\": {\n      \"confederate_flag\": 0.54324,\n      \"pepe_frog\": 0.54324,\n      \"nazi_swastika\": 0.54324\n    },\n    \"visual_content\": {\n      \"artistic\": 0.54324,\n      \"comic\": 0.54324,\n      \"meme\": 0.54324,\n      \"screenshot\": 0.54324,\n      \"map\": 0.54324,\n      \"poster_cover\": 0.54324,\n      \"game_screenshot\": 0.54324,\n      \"face_filter\": 0.54324,\n      \"promo_info_graphic\": 0.54324,\n      \"photo\": 0.54324\n    },\n    \"other\": {\n      \"child\": 0.54324,\n      \"middle_finger_gesture\": 0.54324,\n      \"toy\": 0.54324,\n      \"gambling_machine\": 0.54324,\n      \"face_f\": 0.54324,\n      \"face_m\": 0.54324\n    },\n    \"ocr_language_toxicity\": {\n      \"toxicity\": 0.54324,\n      \"severe_toxicity\": 0.54324,\n      \"obscene\": 0.54324,\n      \"insult\": 0.54324,\n      \"identity_attack\": 0.54324,\n      \"threat\": 0.54324,\n      \"sexual_explicit\": 0.54324\n    },\n    \"audio_language_toxicity\": {\n      \"toxicity\": 0.54324,\n      \"severe_toxicity\": 0.54324,\n      \"obscene\": 0.54324,\n      \"insult\": 0.54324,\n      \"identity_attack\": 0.54324,\n      \"threat\": 0.54324,\n      \"sexual_explicit\": 0.54324\n    },\n    \"caption_language_toxicity\": {\n      \"toxicity\": 0.54324,\n      \"severe_toxicity\": 0.54324,\n      \"obscene\": 0.54324,\n      \"insult\": 0.54324,\n      \"identity_attack\": 0.54324,\n      \"threat\": 0.54324,\n      \"sexual_explicit\": 0.54324\n    },\n    \"ocr_texts\": [\n      \"string\",\n      \"string\"\n    ],\n    \"audio_texts\": [\n      \"string\",\n      \"string\"\n    ],\n    \"url\": \"https://wHubWWg.qvGOFrCST3xW-+iRddligTIUV7yRNR7GD\",\n    \"metadata\": {\n      \"width\": 7064,\n      \"height\": 6580,\n      \"fps\": 8238.55720422556,\n      \"duration\": 8260.391159438057,\n      \"seconds_processed\": 4196.883745293119\n    }\n  },\n  \"msg\": \"string\"\n}",
+              "cookie": [],
+              "_postman_previewlanguage": "json"
+            },
+            {
+              "id": "2d2213c0-23a2-47e3-9506-982ed34ec4b7",
+              "name": "Not found",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "classify",
+                    "items-characteristics",
+                    "video",
+                    ":job_id"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [],
+                  "variable": [
+                    {
+                      "disabled": false,
+                      "type": "any",
+                      "value": "<uuid4>",
+                      "key": "job_id",
+                      "description": "(Required) "
+                    }
+                  ]
+                },
+                "header": [
+                  {
+                    "description": {
+                      "content": "Added as a part of security scheme: bearer",
+                      "type": "text/plain"
+                    },
+                    "key": "Authorization",
+                    "value": "Bearer <token>"
+                  }
+                ],
+                "method": "GET",
+                "body": {}
+              },
+              "status": "Not Found",
+              "code": 404,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "text/plain"
+                }
+              ],
+              "body": "",
+              "cookie": [],
+              "_postman_previewlanguage": "text"
+            },
+            {
+              "id": "888e5fa5-5d82-464d-a311-be05773c272c",
+              "name": "Validation Error",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "classify",
+                    "items-characteristics",
+                    "video",
+                    ":job_id"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [],
+                  "variable": [
+                    {
+                      "disabled": false,
+                      "type": "any",
+                      "value": "<uuid4>",
+                      "key": "job_id",
+                      "description": "(Required) "
+                    }
+                  ]
+                },
+                "header": [
+                  {
+                    "description": {
+                      "content": "Added as a part of security scheme: bearer",
+                      "type": "text/plain"
+                    },
+                    "key": "Authorization",
+                    "value": "Bearer <token>"
+                  },
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  }
+                ],
+                "method": "GET",
+                "body": {}
+              },
+              "status": "Unprocessable Entity (WebDAV) (RFC 4918)",
+              "code": 422,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"detail\": [\n    {\n      \"loc\": [\n        \"string\",\n        \"string\"\n      ],\n      \"msg\": \"string\",\n      \"type\": \"string\"\n    },\n    {\n      \"loc\": [\n        \"string\",\n        \"string\"\n      ],\n      \"msg\": \"string\",\n      \"type\": \"string\"\n    }\n  ]\n}",
+              "cookie": [],
+              "_postman_previewlanguage": "json"
+            }
+          ],
+          "event": [],
+          "protocolProfileBehavior": {
+            "disableBodyPruning": true
+          }
+        }
+      ],
+      "event": []
+    }
+  ],
+  "event": [],
+  "variable": [
+    {
+      "type": "string",
+      "value": "/",
+      "key": "baseUrl"
+    }
+  ],
+  "info": {
+    "_postman_id": "0ebaf1aa-6913-449f-ba73-316662c0c00b",
+    "name": "Unitary content classification API Authentication Items & Characteristics API",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+    "description": {
+      "content": "\nThis API is for classifying image and video files to detect various types of potentially harmful content.\n\n## Before you start:\n- You will need an API key to access this API. Please email contact@unitary.ai to obtain one.\n- If using the webhooks function then a preshared secret will also be required.\n\n\n## API Authentication\n\nAll API requests (except to /authenticate) require a valid API token in the `Authorization` header.\nTo obtain an API token you should POST to /authenticate with your API key.\n\nAPI Tokens will be valid for a period of time (default 24h) and should be re-used until they expire or are invalidated.\nPlease note that the /authenticate endpoint is rate-limited and excessive requests will return errors.\n\n## Submitting media for classification\n\nUnitary's API accepts files for the image/video endpoints and free text on the detoxify endpoint.\nThe files or texts are submitted to the aforementioned endpoints for asynchronous classification returning a `job_id`\nassociated with each request.\n\nMedia files can either be sent as multi-part form uploads, or preferably by including a `url` field in the request where the media file can be downloaded from. Presigned object-storage URLs are supported.\n\n### Current limitations\nTo ensure high quality and speed in our responses, we have a few limitations on the size and type of media we process. Please let us know if any of these limitations represent an issue for you. We are more than happy to reevaluate our solution to meet your needs.\n- The maximum allowed image size is 10 MB The maximum allowed video size is 200 MB. Requests made with media files larger than the limits specified may not be processed.\n- The image formats we support are .png and .jpeg\n- The video formats we support are .Mp4, Mpeg, Webm, Mov, Mkv, M4v\n\n## Receiving classification results\n\nFor receiving results we support multiple methods:\n\n- The preferred method is to utilise the webhook function by including a `callback_url` parameter in the classification request. Results will be delivered by a POST request to the `callback_url` as soon as the resource is classified.\n- Results can also be retrieved by polling the GET endpoints. This method may be inconvenient as processing can take multiple hours.\n\n",
+      "type": "text/plain"
+    }
+  }
+}

@@ -1,0 +1,33 @@
+{
+  "opencollection": "1.0.0",
+  "info": {
+    "name": "Unitary content classification API Authentication API",
+    "version": "1.0.0"
+  },
+  "items": [
+    {
+      "info": {
+        "name": "API Authentication",
+        "type": "folder"
+      },
+      "items": [
+        {
+          "info": {
+            "name": "Authenticate with API Key to obtain an API token",
+            "type": "http"
+          },
+          "http": {
+            "method": "POST",
+            "url": "{{baseUrl}}/authenticate",
+            "body": {
+              "type": "form-urlencoded",
+              "data": []
+            }
+          },
+          "docs": "Clients wishing to interact with the Unitary API must first authenticate by calling this endpoint with a valid API Key in the request body.\n\nThe resulting `api_token` should be used in subsequent API requests by including a header with the format:\n```\nAuthorization: Bearer {api_token}\n```\n\nThe `api_token` will be valid for a period of time (default 24 hours) and should be used for all subsequent API requests until it expires, or is invalidated.\n\n**This endpoint is rate-limited and may return err"
+        }
+      ]
+    }
+  ],
+  "bundled": true
+}

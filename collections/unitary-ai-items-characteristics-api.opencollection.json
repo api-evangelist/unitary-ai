@@ -1,0 +1,100 @@
+{
+  "opencollection": "1.0.0",
+  "info": {
+    "name": "Unitary content classification API Authentication Items & Characteristics API",
+    "version": "1.0.0"
+  },
+  "items": [
+    {
+      "info": {
+        "name": "Items & Characteristics",
+        "type": "folder"
+      },
+      "items": [
+        {
+          "info": {
+            "name": "Queue an image for Items & Characteristics classification",
+            "type": "http"
+          },
+          "http": {
+            "method": "POST",
+            "url": "{{baseUrl}}/classify/items-characteristics/image",
+            "body": {
+              "type": "multipart-form",
+              "data": []
+            },
+            "auth": {
+              "type": "bearer",
+              "token": "{{bearerToken}}"
+            }
+          },
+          "docs": "This endpoint queues a job that predicts the Items & Characteristics categories of a single image.\n\nThe request must contain either a file (a multi-part form encoded image file) or a `url` form field (a string containing a URL to download the image file from).\n\nExample CURL:\n```\ncurl --location --request POST https://api.unitary.ai/v1/classify/items-characteristics/image --header \"Authorization: Bearer {API_TOKEN}\" --header \"Content-Type: multipart/form-data\" --form \"url={RESOURCE_URL}\"\n```\n\nA j"
+        },
+        {
+          "info": {
+            "name": "Retrieve the results of a queued Items & Characteristics classification",
+            "type": "http"
+          },
+          "http": {
+            "method": "GET",
+            "url": "{{baseUrl}}/classify/items-characteristics/image/:job_id",
+            "params": [
+              {
+                "name": "job_id",
+                "value": "",
+                "type": "path"
+              }
+            ],
+            "auth": {
+              "type": "bearer",
+              "token": "{{bearerToken}}"
+            }
+          },
+          "docs": "This endpoint returns the results of a previously queued classify job.\n\nThe response for each item is a prevalence score between 0 and 1 that represents how present it is in the content. 1 is highest prevalence and 0 is lowest prevalence.\n\nYou can use these scores in mappings or models to implement safety policies, for example setting a numerical threshold for automated flagging of content or in a linear regression model.\n\nNote that the score meaning and distribution is different for each item: "
+        },
+        {
+          "info": {
+            "name": "Queue a video for Items & Characteristics classification",
+            "type": "http"
+          },
+          "http": {
+            "method": "POST",
+            "url": "{{baseUrl}}/classify/items-characteristics/video",
+            "body": {
+              "type": "multipart-form",
+              "data": []
+            },
+            "auth": {
+              "type": "bearer",
+              "token": "{{bearerToken}}"
+            }
+          },
+          "docs": "This endpoint queues a job that predicts the Items & Characteristics categories of a single video.\n\nThe request must contain either a file (a multi-part form encoded video file) or a `url` form field (a string containing a URL to download the video file from).\n\nExample CURL:\n```\ncurl --location --request POST https://api.unitary.ai/v1/classify/items-characteristics/video --header \"Authorization: Bearer {API_TOKEN}\" --header \"Content-Type: multipart/form-data\" --form \"url={RESOURCE_URL}\"\n```\n\nA j"
+        },
+        {
+          "info": {
+            "name": "Retrieve the results of a queued Items & Characteristics classification",
+            "type": "http"
+          },
+          "http": {
+            "method": "GET",
+            "url": "{{baseUrl}}/classify/items-characteristics/video/:job_id",
+            "params": [
+              {
+                "name": "job_id",
+                "value": "",
+                "type": "path"
+              }
+            ],
+            "auth": {
+              "type": "bearer",
+              "token": "{{bearerToken}}"
+            }
+          },
+          "docs": "This endpoint returns the results of a previously queued classify job.\n\nThe response for each item is a prevalence score between 0 and 1 that represents how present it is in the content. 1 is highest prevalence and 0 is lowest prevalence.\n\nYou can use these scores in mappings or models to implement safety policies, for example setting a numerical threshold for automated flagging of content or in a linear regression model.\n\nNote that the score meaning and distribution is different for each item: "
+        }
+      ]
+    }
+  ],
+  "bundled": true
+}

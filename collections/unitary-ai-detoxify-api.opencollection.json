@@ -1,0 +1,59 @@
+{
+  "opencollection": "1.0.0",
+  "info": {
+    "name": "Unitary content classification API Authentication Detoxify API",
+    "version": "1.0.0"
+  },
+  "items": [
+    {
+      "info": {
+        "name": "Detoxify",
+        "type": "folder"
+      },
+      "items": [
+        {
+          "info": {
+            "name": "Queue text for Detoxify classification",
+            "type": "http"
+          },
+          "http": {
+            "method": "POST",
+            "url": "{{baseUrl}}/detoxify/text/",
+            "body": {
+              "type": "form-urlencoded",
+              "data": []
+            },
+            "auth": {
+              "type": "bearer",
+              "token": "{{bearerToken}}"
+            }
+          },
+          "docs": "This endpoint predicts the Detoxify categories of text."
+        },
+        {
+          "info": {
+            "name": "Retrieve the results of a queued Detoxify classification",
+            "type": "http"
+          },
+          "http": {
+            "method": "GET",
+            "url": "{{baseUrl}}/detoxify/text/:job_id",
+            "params": [
+              {
+                "name": "job_id",
+                "value": "",
+                "type": "path"
+              }
+            ],
+            "auth": {
+              "type": "bearer",
+              "token": "{{bearerToken}}"
+            }
+          },
+          "docs": "This endpoint returns the results of a previously queued classify job"
+        }
+      ]
+    }
+  ],
+  "bundled": true
+}

@@ -1,0 +1,138 @@
+{
+  "opencollection": "1.0.0",
+  "info": {
+    "name": "Unitary content classification API Authentication Policy Classification API",
+    "version": "1.0.0"
+  },
+  "items": [
+    {
+      "info": {
+        "name": "Policy Classification",
+        "type": "folder"
+      },
+      "items": [
+        {
+          "info": {
+            "name": "Submit an image for immediate Policy classification",
+            "type": "http"
+          },
+          "http": {
+            "method": "POST",
+            "url": "{{baseUrl}}/classify/policy/image/now",
+            "body": {
+              "type": "form-urlencoded",
+              "data": []
+            },
+            "auth": {
+              "type": "bearer",
+              "token": "{{bearerToken}}"
+            }
+          },
+          "docs": "This endpoint predicts the policy categories of a single image.\n\nThe request must contain a `url` form field (a string containing a URL to download the image file from).\n\nExample CURL:\n```\ncurl --location --request POST \"https://api.unitary.ai/v1/classify/policy/image/now\" --header \"Authorization: Bearer {API_TOKEN}\" --header \"Content-Type: multipart/form-data\" --form \"url={RESOURCE_URL}\"\n```"
+        },
+        {
+          "info": {
+            "name": "Queue an image for Policy classification",
+            "type": "http"
+          },
+          "http": {
+            "method": "POST",
+            "url": "{{baseUrl}}/classify/policy/image",
+            "body": {
+              "type": "form-urlencoded",
+              "data": []
+            },
+            "auth": {
+              "type": "bearer",
+              "token": "{{bearerToken}}"
+            }
+          },
+          "docs": "This endpoint predicts the policy categories of a single image.\n\nThe request must contain a `url` form field (a string containing a URL to download the image file from).\n\nExample CURL:\n```\ncurl --location --request POST \"https://api.unitary.ai/v1/classify/policy/image\" --header \"Authorization: Bearer {API_TOKEN}\" --header \"Content-Type: multipart/form-data\" --form \"url={RESOURCE_URL}\"\n```"
+        },
+        {
+          "info": {
+            "name": "Retrieve the results of a queued Policy classification job",
+            "type": "http"
+          },
+          "http": {
+            "method": "GET",
+            "url": "{{baseUrl}}/classify/policy/image/:job_id",
+            "params": [
+              {
+                "name": "job_id",
+                "value": "",
+                "type": "path"
+              }
+            ],
+            "auth": {
+              "type": "bearer",
+              "token": "{{bearerToken}}"
+            }
+          },
+          "docs": "Retrieve the results of a queued Policy classification job"
+        },
+        {
+          "info": {
+            "name": "Submit a video for immediate Policy classification",
+            "type": "http"
+          },
+          "http": {
+            "method": "POST",
+            "url": "{{baseUrl}}/classify/policy/video/now",
+            "body": {
+              "type": "form-urlencoded",
+              "data": []
+            },
+            "auth": {
+              "type": "bearer",
+              "token": "{{bearerToken}}"
+            }
+          },
+          "docs": "This endpoint predicts the policy categories of a single video.\n\nThe request must contain a `url` form field (a string containing a URL to download the video file from).\n\nExample CURL:\n```\ncurl --location --request POST \"https://api.unitary.ai/v1/classify/policy/video/now\" --header \"Authorization: Bearer {API_TOKEN}\" --header \"Content-Type: multipart/form-data\" --form \"url={RESOURCE_URL}\"\n```"
+        },
+        {
+          "info": {
+            "name": "Queue a video for Policy classification",
+            "type": "http"
+          },
+          "http": {
+            "method": "POST",
+            "url": "{{baseUrl}}/classify/policy/video",
+            "body": {
+              "type": "form-urlencoded",
+              "data": []
+            },
+            "auth": {
+              "type": "bearer",
+              "token": "{{bearerToken}}"
+            }
+          },
+          "docs": "This endpoint predicts the policy categories of a single video.\n\nThe request must contain a `url` form field (a string containing a URL to download the video file from).\n\nExample CURL:\n```\ncurl --location --request POST \"https://api.unitary.ai/v1/classify/policy/video\" --header \"Authorization: Bearer {API_TOKEN}\" --header \"Content-Type: multipart/form-data\" --form \"url={RESOURCE_URL}\"\n```"
+        },
+        {
+          "info": {
+            "name": "Retrieve the results of a queued Policy classification job",
+            "type": "http"
+          },
+          "http": {
+            "method": "GET",
+            "url": "{{baseUrl}}/classify/policy/video/:job_id",
+            "params": [
+              {
+                "name": "job_id",
+                "value": "",
+                "type": "path"
+              }
+            ],
+            "auth": {
+              "type": "bearer",
+              "token": "{{bearerToken}}"
+            }
+          },
+          "docs": "Retrieve the results of a queued Policy classification job"
+        }
+      ]
+    }
+  ],
+  "bundled": true
+}

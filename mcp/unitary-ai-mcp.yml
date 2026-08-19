@@ -2,54 +2,58 @@ generated: '2026-07-21'
 method: derived
 status: candidate
 source: openapi/unitary-ai-content-classification-openapi-original.yaml
-notes: >-
-  No official Unitary MCP server was found (docs.unitary.ai, the unitaryai GitHub
-  org, and the public MCP registries were searched). This is a candidate tool list
-  derived one-tool-per-operation from Unitary's published OpenAPI 3.1 spec for the
-  content classification API at https://api.unitary.ai/v1.
+notes: No official Unitary MCP server was found (docs.unitary.ai, the unitaryai GitHub org, and the public
+  MCP registries were searched). This is a candidate tool list derived one-tool-per-operation from Unitary's
+  published OpenAPI 3.1 spec for the content classification API at https://api.unitary.ai/v1.
 server:
   name: unitary-ai
   transport: http
 tools:
-  - name: authenticate
-    description: Authenticate with an API key to obtain a 24-hour Bearer API token
-    source_operation: openapi/unitary-ai-content-classification-openapi-original.yaml#authenticate_authenticate_post
-  - name: classify_policy_image_now
-    description: Submit an image for immediate (synchronous) policy classification
-    source_operation: openapi/unitary-ai-content-classification-openapi-original.yaml#image_classify_policy_now_classify_policy_image_now_post
-  - name: classify_policy_image
-    description: Queue an image for asynchronous policy classification (returns job_id)
-    source_operation: openapi/unitary-ai-content-classification-openapi-original.yaml#image_policy_classify_classify_policy_image_post
-  - name: get_policy_image_results
-    description: Retrieve policy classification results for an image job
-    source_operation: openapi/unitary-ai-content-classification-openapi-original.yaml#image_policy_classification_results_classify_policy_image__job_id__get
-  - name: classify_items_characteristics_image
-    description: Queue an image for Items and Characteristics classification (returns job_id)
-    source_operation: openapi/unitary-ai-content-classification-openapi-original.yaml#image_items_characteristics_classify_classify_items_characteristics_image_post
-  - name: get_items_characteristics_image_results
-    description: Retrieve Items and Characteristics results for an image job
-    source_operation: openapi/unitary-ai-content-classification-openapi-original.yaml#image_items_characteristics_results_classify_items_characteristics_image__job_id__get
-  - name: classify_policy_video_now
-    description: Submit a video for immediate (synchronous) policy classification
-    source_operation: openapi/unitary-ai-content-classification-openapi-original.yaml#video_classify_policy_now_classify_policy_video_now_post
-  - name: classify_policy_video
-    description: Queue a video for asynchronous policy classification (returns job_id)
-    source_operation: openapi/unitary-ai-content-classification-openapi-original.yaml#video_policy_classify_classify_policy_video_post
-  - name: get_policy_video_results
-    description: Retrieve policy classification results for a video job
-    source_operation: openapi/unitary-ai-content-classification-openapi-original.yaml#video_policy_classification_results_classify_policy_video__job_id__get
-  - name: classify_items_characteristics_video
-    description: Queue a video for Items and Characteristics classification (returns job_id)
-    source_operation: openapi/unitary-ai-content-classification-openapi-original.yaml#video_items_characteristics_classify_classify_items_characteristics_video_post
-  - name: get_items_characteristics_video_results
-    description: Retrieve Items and Characteristics results for a video job
-    source_operation: openapi/unitary-ai-content-classification-openapi-original.yaml#video_items_characteristics_results_classify_items_characteristics_video__job_id__get
-  - name: detoxify_text
-    description: Queue text for Detoxify harmful-language classification (returns job_id)
-    source_operation: openapi/unitary-ai-content-classification-openapi-original.yaml#text_detoxify_classify_detoxify_text__post
-  - name: get_detoxify_text_results
-    description: Retrieve Detoxify classification results for a text job
-    source_operation: openapi/unitary-ai-content-classification-openapi-original.yaml#text_results_detoxify_text__job_id__get
-  - name: moderate_content
-    description: Submit content to a Virtual Trust and Safety Agent for blended AI + human moderation
-    source_operation: openapi/unitary-ai-content-classification-openapi-original.yaml#moderate_content_moderate_post
+- name: authenticate
+  description: Authenticate with an API key to obtain a 24-hour Bearer API token
+  source_operation: openapi/unitary-ai-content-classification-openapi-original.yaml#authenticate_authenticate_post
+- name: classify_policy_image_now
+  description: Submit an image for immediate (synchronous) policy classification
+  source_operation: openapi/unitary-ai-content-classification-openapi-original.yaml#image_classify_policy_now_classify_policy_image_now_post
+- name: classify_policy_image
+  description: Queue an image for asynchronous policy classification (returns job_id)
+  source_operation: openapi/unitary-ai-content-classification-openapi-original.yaml#image_policy_classify_classify_policy_image_post
+- name: get_policy_image_results
+  description: Retrieve policy classification results for an image job
+  source_operation: openapi/unitary-ai-content-classification-openapi-original.yaml#image_policy_classification_results_classify_policy_image__job_id__get
+- name: classify_items_characteristics_image
+  description: Queue an image for Items and Characteristics classification (returns job_id)
+  source_operation: openapi/unitary-ai-content-classification-openapi-original.yaml#image_items_characteristics_classify_classify_items_characteristics_image_post
+- name: get_items_characteristics_image_results
+  description: Retrieve Items and Characteristics results for an image job
+  source_operation: openapi/unitary-ai-content-classification-openapi-original.yaml#image_items_characteristics_results_classify_items_characteristics_image__job_id__get
+- name: classify_policy_video_now
+  description: Submit a video for immediate (synchronous) policy classification
+  source_operation: openapi/unitary-ai-content-classification-openapi-original.yaml#video_classify_policy_now_classify_policy_video_now_post
+- name: classify_policy_video
+  description: Queue a video for asynchronous policy classification (returns job_id)
+  source_operation: openapi/unitary-ai-content-classification-openapi-original.yaml#video_policy_classify_classify_policy_video_post
+- name: get_policy_video_results
+  description: Retrieve policy classification results for a video job
+  source_operation: openapi/unitary-ai-content-classification-openapi-original.yaml#video_policy_classification_results_classify_policy_video__job_id__get
+- name: classify_items_characteristics_video
+  description: Queue a video for Items and Characteristics classification (returns job_id)
+  source_operation: openapi/unitary-ai-content-classification-openapi-original.yaml#video_items_characteristics_classify_classify_items_characteristics_video_post
+- name: get_items_characteristics_video_results
+  description: Retrieve Items and Characteristics results for a video job
+  source_operation: openapi/unitary-ai-content-classification-openapi-original.yaml#video_items_characteristics_results_classify_items_characteristics_video__job_id__get
+- name: detoxify_text
+  description: Queue text for Detoxify harmful-language classification (returns job_id)
+  source_operation: openapi/unitary-ai-content-classification-openapi-original.yaml#text_detoxify_classify_detoxify_text__post
+- name: get_detoxify_text_results
+  description: Retrieve Detoxify classification results for a text job
+  source_operation: openapi/unitary-ai-content-classification-openapi-original.yaml#text_results_detoxify_text__job_id__get
+- name: moderate_content
+  description: Submit content to a Virtual Trust and Safety Agent for blended AI + human moderation
+  source_operation: openapi/unitary-ai-content-classification-openapi-original.yaml#moderate_content_moderate_post
+deployment:
+  mode: none
+  verified: derived
+  tools: 14
+  checked: '2026-08-12'
+  source: catalog MCP census
