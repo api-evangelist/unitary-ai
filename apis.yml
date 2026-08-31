@@ -52,9 +52,9 @@ created: '2026-07-17'
 modified: '2026-07-21'
 tags:
 - Company
-- Software-as-a-Service
+- Saas
 - Content Moderation
-- Trust and Safety
+- Trust And Safety
 - Artificial Intelligence
 - Machine-Learning
 - Computer-Vision
@@ -77,7 +77,7 @@ apis:
   humanURL: https://docs.unitary.ai/
   baseURL: https://api.unitary.ai/v1
   tags:
-  - API / Authentication
+  - API Authentication
   tags_raw:
   - API Authentication
   properties:
