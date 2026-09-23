@@ -1,22 +1,33 @@
 {
   "provider": "unitary-ai",
   "sources": [
-    "unitary-ai-api-authentication-api-openapi.yml",
-    "unitary-ai-detoxify-api-openapi.yml",
-    "unitary-ai-items-characteristics-api-openapi.yml",
-    "unitary-ai-moderation-api-openapi.yml",
-    "unitary-ai-policy-classification-api-openapi.yml"
+    "_original/unitary-ai-content-classification-openapi-original.yaml"
   ],
   "outputs": [
     "unitary-ai-api-authentication-api-openapi.yml",
     "unitary-ai-detoxify-api-openapi.yml",
     "unitary-ai-items-characteristics-api-openapi.yml",
-    "unitary-ai-moderation-api-openapi.yml",
-    "unitary-ai-policy-classification-api-openapi.yml"
+    "unitary-ai-policy-classification-api-openapi.yml",
+    "unitary-ai-moderation-api-openapi.yml"
   ],
   "archived": [],
   "errors": [],
   "warnings": [],
-  "notes": [],
-  "skipped": []
+  "notes": [
+    "sourced from openapi/_original/ (1 archived document(s)); previously refined output at the top level was skipped rather than re-split",
+    "unitary-ai-content-classification-openapi-original.yaml: upgraded openapi 3.1.0 -> OpenAPI 3.2.0",
+    "unitary-ai-content-classification-openapi-original.yaml: declared missing tag: API Authentication",
+    "unitary-ai-content-classification-openapi-original.yaml: declared missing tag: Detoxify",
+    "unitary-ai-content-classification-openapi-original.yaml: declared missing tag: Items & Characteristics",
+    "unitary-ai-content-classification-openapi-original.yaml: declared missing tag: Policy Classification",
+    "unitary-ai-content-classification-openapi-original.yaml: declared missing tag: moderation",
+    "apis.yml register: already-registered"
+  ],
+  "skipped": [
+    "unitary-ai-api-authentication-api-openapi.yml: previously refined output, superseded by openapi/_original/",
+    "unitary-ai-detoxify-api-openapi.yml: previously refined output, superseded by openapi/_original/",
+    "unitary-ai-items-characteristics-api-openapi.yml: previously refined output, superseded by openapi/_original/",
+    "unitary-ai-moderation-api-openapi.yml: previously refined output, superseded by openapi/_original/",
+    "unitary-ai-policy-classification-api-openapi.yml: previously refined output, superseded by openapi/_original/"
+  ]
 }
