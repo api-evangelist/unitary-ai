@@ -57,8 +57,8 @@ tags:
 - Content Moderation
 - Trust and Safety
 - Artificial Intelligence
-- Machine-Learning
-- Computer-Vision
+- Machine Learning
+- Computer Vision
 - Video
 - Virtual Agents
 tags_raw:
@@ -71,6 +71,8 @@ tags_raw:
 - Computer Vision
 - Video
 - Virtual Agents
+- Machine-Learning
+- Computer-Vision
 apis:
 - aid: unitary-ai:unitary-ai-api-authentication-api
   name: Unitary AI API Authentication API
@@ -112,7 +114,7 @@ apis:
   - type: Documentation
     url: https://docs.unitary.ai/
 - aid: unitary-ai:unitary-ai-moderation-api
-  name: Unitary AI moderation API
+  name: Unitary AI Moderation API
   description: The moderation API from Unitary AI — 1 operation(s) for moderation.
   humanURL: https://docs.unitary.ai/
   baseURL: https://api.unitary.ai/v1

@@ -70,35 +70,39 @@ paths:
       - JWTBearer: []
 components:
   schemas:
-    DetoxifyModel:
-      type: string
-      enum:
-      - multilingual
-      title: DetoxifyModel
-      description: An enumeration.
-    AsyncResponse_DetoxifyResponse_:
+    ValidationError:
       properties:
-        status:
-          allOf:
-          - $ref: '#/components/schemas/AsyncResponseStatus'
-          title: Status of classification job
-        results:
-          allOf:
-          - $ref: '#/components/schemas/DetoxifyResponse'
-          title: Classification results
+        loc:
+          items:
+            anyOf:
+            - type: string
+            - type: integer
+          type: array
+          title: Location
         msg:
           type: string
-          title: Error details
+          title: Message
+        type:
+          type: string
+          title: Error Type
       type: object
       required:
-      - status
-      title: AsyncResponse[DetoxifyResponse]
+      - loc
+      - msg
+      - type
+      title: ValidationError
     AsyncResponseStatus:
       enum:
       - done
       - failed
       - queued
       title: AsyncResponseStatus
+      description: An enumeration.
+    DetoxifyModel:
+      type: string
+      enum:
+      - multilingual
+      title: DetoxifyModel
       description: An enumeration.
     DetoxifyResponse:
       properties:
@@ -133,27 +137,6 @@ components:
       - identity_attack
       - sexual_explicit
       title: DetoxifyResponse
-    ValidationError:
-      properties:
-        loc:
-          items:
-            anyOf:
-            - type: string
-            - type: integer
-          type: array
-          title: Location
-        msg:
-          type: string
-          title: Message
-        type:
-          type: string
-          title: Error Type
-      type: object
-      required:
-      - loc
-      - msg
-      - type
-      title: ValidationError
     Body_text_detoxify_classify_detoxify_text__post:
       properties:
         callback_url:
@@ -179,15 +162,23 @@ components:
       required:
       - text
       title: Body_text_detoxify_classify_detoxify_text__post
-    HTTPValidationError:
+    AsyncResponse_DetoxifyResponse_:
       properties:
-        detail:
-          items:
-            $ref: '#/components/schemas/ValidationError'
-          type: array
-          title: Detail
+        status:
+          allOf:
+          - $ref: '#/components/schemas/AsyncResponseStatus'
+          title: Status of classification job
+        results:
+          allOf:
+          - $ref: '#/components/schemas/DetoxifyResponse'
+          title: Classification results
+        msg:
+          type: string
+          title: Error details
       type: object
-      title: HTTPValidationError
+      required:
+      - status
+      title: AsyncResponse[DetoxifyResponse]
     JobIDResponse:
       properties:
         job_id:
@@ -198,6 +189,15 @@ components:
       required:
       - job_id
       title: JobIDResponse
+    HTTPValidationError:
+      properties:
+        detail:
+          items:
+            $ref: '#/components/schemas/ValidationError'
+          type: array
+          title: Detail
+      type: object
+      title: HTTPValidationError
   securitySchemes:
     JWTBearer:
       type: http

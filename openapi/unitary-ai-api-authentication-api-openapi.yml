@@ -60,15 +60,6 @@ components:
       required:
       - key
       title: Body_authenticate_authenticate_post
-    HTTPValidationError:
-      properties:
-        detail:
-          items:
-            $ref: '#/components/schemas/ValidationError'
-          type: array
-          title: Detail
-      type: object
-      title: HTTPValidationError
     ValidationError:
       properties:
         loc:
@@ -104,6 +95,15 @@ components:
       - api_token
       - expiry
       title: LoginResponse
+    HTTPValidationError:
+      properties:
+        detail:
+          items:
+            $ref: '#/components/schemas/ValidationError'
+          type: array
+          title: Detail
+      type: object
+      title: HTTPValidationError
   securitySchemes:
     JWTBearer:
       type: http
