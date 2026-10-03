@@ -37,6 +37,74 @@ paths:
       - JWTBearer: []
 components:
   schemas:
+    MetadataAttachment:
+      properties:
+        relation_to_main_media:
+          type: string
+          enum:
+          - related_link
+          - comment
+          - post
+          - chat
+          - profile
+          - post_by_same_user
+          - metadata
+          - user_report
+          title: Relation To Main Media
+          description: Defines how the attachment is related to the main media, such as being a comment, a post, or a chat
+          default: post
+        type:
+          type: string
+          enum:
+          - metadata
+          const: metadata
+          title: Type
+          default: metadata
+        value:
+          type: string
+          title: Value
+        mime_type:
+          type: string
+          enum:
+          - application/json
+          const: application/json
+          title: Mime Type
+          description: MIME type of the metadata content
+      type: object
+      required:
+      - value
+      - mime_type
+      title: MetadataAttachment
+    TextMainContent:
+      properties:
+        external_id:
+          type: string
+          title: External Id
+        is_user_report:
+          type: boolean
+          title: Is User Report
+          default: false
+        value:
+          type: string
+          title: Value
+        type:
+          type: string
+          enum:
+          - text
+          const: text
+          title: Type
+        resource_url:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Resource Url
+      additionalProperties: false
+      type: object
+      required:
+      - external_id
+      - value
+      - type
+      title: TextMainContent
     TextAttachment:
       properties:
         relation_to_main_media:
@@ -77,65 +145,56 @@ components:
       - mime_type
       - value
       title: TextAttachment
-    ValidationError:
+    VirtualModeratorRequest:
       properties:
-        loc:
+        main_content:
+          oneOf:
+          - $ref: '#/components/schemas/MediaMainContent'
+          - $ref: '#/components/schemas/TextMainContent'
+          title: Main Content
+          discriminator:
+            propertyName: type
+            mapping:
+              image: '#/components/schemas/MediaMainContent'
+              text: '#/components/schemas/TextMainContent'
+              video: '#/components/schemas/MediaMainContent'
+        classification_job_id:
+          anyOf:
+          - type: string
+            format: uuid
+          - type: 'null'
+          title: Classification Job Id
+        attachments:
           items:
-            anyOf:
-            - type: string
-            - type: integer
+            oneOf:
+            - $ref: '#/components/schemas/TextAttachment'
+            - $ref: '#/components/schemas/LinkAttachment'
+            - $ref: '#/components/schemas/UserReportAttachment'
+            - $ref: '#/components/schemas/MetadataAttachment'
+            description: Attachment adding context to the main content
+            discriminator:
+              propertyName: type
+              mapping:
+                link: '#/components/schemas/LinkAttachment'
+                metadata: '#/components/schemas/MetadataAttachment'
+                text: '#/components/schemas/TextAttachment'
+                user_report: '#/components/schemas/UserReportAttachment'
           type: array
-          title: Location
-        msg:
+          title: Attachments
+        callback_url:
           type: string
-          title: Message
-        type:
-          type: string
-          title: Error Type
+          maxLength: 2083
+          minLength: 1
+          format: uri
+          title: Callback Url
+      additionalProperties: false
       type: object
       required:
-      - loc
-      - msg
-      - type
-      title: ValidationError
-    MetadataAttachment:
-      properties:
-        relation_to_main_media:
-          type: string
-          enum:
-          - related_link
-          - comment
-          - post
-          - chat
-          - profile
-          - post_by_same_user
-          - metadata
-          - user_report
-          title: Relation To Main Media
-          description: Defines how the attachment is related to the main media, such as being a comment, a post, or a chat
-          default: post
-        type:
-          type: string
-          enum:
-          - metadata
-          const: metadata
-          title: Type
-          default: metadata
-        value:
-          type: string
-          title: Value
-        mime_type:
-          type: string
-          enum:
-          - application/json
-          const: application/json
-          title: Mime Type
-          description: MIME type of the metadata content
-      type: object
-      required:
-      - value
-      - mime_type
-      title: MetadataAttachment
+      - main_content
+      - attachments
+      - callback_url
+      title: VirtualModeratorRequest
+      description: Request received by the API worker in the HTTP POST
     LinkAttachment:
       properties:
         relation_to_main_media:
@@ -223,36 +282,15 @@ components:
       - moderation_job_id
       - classification_job_id
       title: VirtualModeratorQueuedResponse
-    TextMainContent:
+    HTTPValidationError:
       properties:
-        external_id:
-          type: string
-          title: External Id
-        is_user_report:
-          type: boolean
-          title: Is User Report
-          default: false
-        value:
-          type: string
-          title: Value
-        type:
-          type: string
-          enum:
-          - text
-          const: text
-          title: Type
-        resource_url:
-          anyOf:
-          - type: string
-          - type: 'null'
-          title: Resource Url
-      additionalProperties: false
+        detail:
+          items:
+            $ref: '#/components/schemas/ValidationError'
+          type: array
+          title: Detail
       type: object
-      required:
-      - external_id
-      - value
-      - type
-      title: TextMainContent
+      title: HTTPValidationError
     UserReportAttachment:
       properties:
         relation_to_main_media:
@@ -283,65 +321,27 @@ components:
       required:
       - value
       title: UserReportAttachment
-    HTTPValidationError:
+    ValidationError:
       properties:
-        detail:
+        loc:
           items:
-            $ref: '#/components/schemas/ValidationError'
+            anyOf:
+            - type: string
+            - type: integer
           type: array
-          title: Detail
-      type: object
-      title: HTTPValidationError
-    VirtualModeratorRequest:
-      properties:
-        main_content:
-          oneOf:
-          - $ref: '#/components/schemas/MediaMainContent'
-          - $ref: '#/components/schemas/TextMainContent'
-          title: Main Content
-          discriminator:
-            propertyName: type
-            mapping:
-              image: '#/components/schemas/MediaMainContent'
-              text: '#/components/schemas/TextMainContent'
-              video: '#/components/schemas/MediaMainContent'
-        classification_job_id:
-          anyOf:
-          - type: string
-            format: uuid
-          - type: 'null'
-          title: Classification Job Id
-        attachments:
-          items:
-            oneOf:
-            - $ref: '#/components/schemas/TextAttachment'
-            - $ref: '#/components/schemas/LinkAttachment'
-            - $ref: '#/components/schemas/UserReportAttachment'
-            - $ref: '#/components/schemas/MetadataAttachment'
-            description: Attachment adding context to the main content
-            discriminator:
-              propertyName: type
-              mapping:
-                link: '#/components/schemas/LinkAttachment'
-                metadata: '#/components/schemas/MetadataAttachment'
-                text: '#/components/schemas/TextAttachment'
-                user_report: '#/components/schemas/UserReportAttachment'
-          type: array
-          title: Attachments
-        callback_url:
+          title: Location
+        msg:
           type: string
-          maxLength: 2083
-          minLength: 1
-          format: uri
-          title: Callback Url
-      additionalProperties: false
+          title: Message
+        type:
+          type: string
+          title: Error Type
       type: object
       required:
-      - main_content
-      - attachments
-      - callback_url
-      title: VirtualModeratorRequest
-      description: Request received by the API worker in the HTTP POST
+      - loc
+      - msg
+      - type
+      title: ValidationError
   securitySchemes:
     JWTBearer:
       type: http

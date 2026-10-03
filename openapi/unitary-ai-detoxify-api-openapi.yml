@@ -70,39 +70,22 @@ paths:
       - JWTBearer: []
 components:
   schemas:
-    ValidationError:
+    JobIDResponse:
       properties:
-        loc:
-          items:
-            anyOf:
-            - type: string
-            - type: integer
-          type: array
-          title: Location
-        msg:
+        job_id:
           type: string
-          title: Message
-        type:
-          type: string
-          title: Error Type
+          format: uuid4
+          title: Job Id
       type: object
       required:
-      - loc
-      - msg
-      - type
-      title: ValidationError
+      - job_id
+      title: JobIDResponse
     AsyncResponseStatus:
       enum:
       - done
       - failed
       - queued
       title: AsyncResponseStatus
-      description: An enumeration.
-    DetoxifyModel:
-      type: string
-      enum:
-      - multilingual
-      title: DetoxifyModel
       description: An enumeration.
     DetoxifyResponse:
       properties:
@@ -137,6 +120,21 @@ components:
       - identity_attack
       - sexual_explicit
       title: DetoxifyResponse
+    DetoxifyModel:
+      type: string
+      enum:
+      - multilingual
+      title: DetoxifyModel
+      description: An enumeration.
+    HTTPValidationError:
+      properties:
+        detail:
+          items:
+            $ref: '#/components/schemas/ValidationError'
+          type: array
+          title: Detail
+      type: object
+      title: HTTPValidationError
     Body_text_detoxify_classify_detoxify_text__post:
       properties:
         callback_url:
@@ -162,6 +160,27 @@ components:
       required:
       - text
       title: Body_text_detoxify_classify_detoxify_text__post
+    ValidationError:
+      properties:
+        loc:
+          items:
+            anyOf:
+            - type: string
+            - type: integer
+          type: array
+          title: Location
+        msg:
+          type: string
+          title: Message
+        type:
+          type: string
+          title: Error Type
+      type: object
+      required:
+      - loc
+      - msg
+      - type
+      title: ValidationError
     AsyncResponse_DetoxifyResponse_:
       properties:
         status:
@@ -179,25 +198,6 @@ components:
       required:
       - status
       title: AsyncResponse[DetoxifyResponse]
-    JobIDResponse:
-      properties:
-        job_id:
-          type: string
-          format: uuid4
-          title: Job Id
-      type: object
-      required:
-      - job_id
-      title: JobIDResponse
-    HTTPValidationError:
-      properties:
-        detail:
-          items:
-            $ref: '#/components/schemas/ValidationError'
-          type: array
-          title: Detail
-      type: object
-      title: HTTPValidationError
   securitySchemes:
     JWTBearer:
       type: http
