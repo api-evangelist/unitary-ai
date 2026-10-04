@@ -37,7 +37,7 @@ paths:
       - JWTBearer: []
 components:
   schemas:
-    MetadataAttachment:
+    LinkAttachment:
       properties:
         relation_to_main_media:
           type: string
@@ -56,55 +56,49 @@ components:
         type:
           type: string
           enum:
-          - metadata
-          const: metadata
+          - link
+          const: link
           title: Type
-          default: metadata
+          default: link
         value:
           type: string
+          minLength: 1
+          format: uri
           title: Value
-        mime_type:
-          type: string
-          enum:
-          - application/json
-          const: application/json
-          title: Mime Type
-          description: MIME type of the metadata content
       type: object
       required:
       - value
-      - mime_type
-      title: MetadataAttachment
-    TextMainContent:
+      title: LinkAttachment
+    UserReportAttachment:
       properties:
-        external_id:
+        relation_to_main_media:
           type: string
-          title: External Id
-        is_user_report:
-          type: boolean
-          title: Is User Report
-          default: false
-        value:
-          type: string
-          title: Value
+          enum:
+          - related_link
+          - comment
+          - post
+          - chat
+          - profile
+          - post_by_same_user
+          - metadata
+          - user_report
+          title: Relation To Main Media
+          description: Defines how the attachment is related to the main media, such as being a comment, a post, or a chat
+          default: post
         type:
           type: string
           enum:
-          - text
-          const: text
+          - user_report
+          const: user_report
           title: Type
-        resource_url:
-          anyOf:
-          - type: string
-          - type: 'null'
-          title: Resource Url
-      additionalProperties: false
+          default: user_report
+        value:
+          type: string
+          title: Value
       type: object
       required:
-      - external_id
       - value
-      - type
-      title: TextMainContent
+      title: UserReportAttachment
     TextAttachment:
       properties:
         relation_to_main_media:
@@ -145,6 +139,99 @@ components:
       - mime_type
       - value
       title: TextAttachment
+    VirtualModeratorQueuedResponse:
+      properties:
+        moderation_job_id:
+          type: string
+          pattern: ^vmod_[0-7][0-9a-hjkmnp-tv-z]{25}$
+          title: Moderation Job Id
+          description: The moderation job ID, which has a 'vmod' prefix
+          examples:
+          - vmod_01h45ytscbebyvny4gc8cr8ma2
+        external_id:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: External Id
+          description: Optional external ID as specified in the request
+        classification_job_id:
+          anyOf:
+          - type: string
+            format: uuid
+          - type: 'null'
+          title: Classification Job Id
+          description: The job ID of the initial classification
+      additionalProperties: false
+      type: object
+      required:
+      - moderation_job_id
+      - classification_job_id
+      title: VirtualModeratorQueuedResponse
+    MetadataAttachment:
+      properties:
+        relation_to_main_media:
+          type: string
+          enum:
+          - related_link
+          - comment
+          - post
+          - chat
+          - profile
+          - post_by_same_user
+          - metadata
+          - user_report
+          title: Relation To Main Media
+          description: Defines how the attachment is related to the main media, such as being a comment, a post, or a chat
+          default: post
+        type:
+          type: string
+          enum:
+          - metadata
+          const: metadata
+          title: Type
+          default: metadata
+        value:
+          type: string
+          title: Value
+        mime_type:
+          type: string
+          enum:
+          - application/json
+          const: application/json
+          title: Mime Type
+          description: MIME type of the metadata content
+      type: object
+      required:
+      - value
+      - mime_type
+      title: MetadataAttachment
+    MediaMainContent:
+      properties:
+        external_id:
+          type: string
+          title: External Id
+        is_user_report:
+          type: boolean
+          title: Is User Report
+          default: false
+        value:
+          type: string
+          minLength: 1
+          format: uri
+          title: Value
+        type:
+          type: string
+          enum:
+          - image
+          - video
+          title: Type
+      additionalProperties: false
+      type: object
+      required:
+      - external_id
+      - value
+      - type
+      title: MediaMainContent
     VirtualModeratorRequest:
       properties:
         main_content:
@@ -195,39 +282,16 @@ components:
       - callback_url
       title: VirtualModeratorRequest
       description: Request received by the API worker in the HTTP POST
-    LinkAttachment:
+    HTTPValidationError:
       properties:
-        relation_to_main_media:
-          type: string
-          enum:
-          - related_link
-          - comment
-          - post
-          - chat
-          - profile
-          - post_by_same_user
-          - metadata
-          - user_report
-          title: Relation To Main Media
-          description: Defines how the attachment is related to the main media, such as being a comment, a post, or a chat
-          default: post
-        type:
-          type: string
-          enum:
-          - link
-          const: link
-          title: Type
-          default: link
-        value:
-          type: string
-          minLength: 1
-          format: uri
-          title: Value
+        detail:
+          items:
+            $ref: '#/components/schemas/ValidationError'
+          type: array
+          title: Detail
       type: object
-      required:
-      - value
-      title: LinkAttachment
-    MediaMainContent:
+      title: HTTPValidationError
+    TextMainContent:
       properties:
         external_id:
           type: string
@@ -238,89 +302,25 @@ components:
           default: false
         value:
           type: string
-          minLength: 1
-          format: uri
           title: Value
         type:
           type: string
           enum:
-          - image
-          - video
+          - text
+          const: text
           title: Type
+        resource_url:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Resource Url
       additionalProperties: false
       type: object
       required:
       - external_id
       - value
       - type
-      title: MediaMainContent
-    VirtualModeratorQueuedResponse:
-      properties:
-        moderation_job_id:
-          type: string
-          pattern: ^vmod_[0-7][0-9a-hjkmnp-tv-z]{25}$
-          title: Moderation Job Id
-          description: The moderation job ID, which has a 'vmod' prefix
-          examples:
-          - vmod_01h45ytscbebyvny4gc8cr8ma2
-        external_id:
-          anyOf:
-          - type: string
-          - type: 'null'
-          title: External Id
-          description: Optional external ID as specified in the request
-        classification_job_id:
-          anyOf:
-          - type: string
-            format: uuid
-          - type: 'null'
-          title: Classification Job Id
-          description: The job ID of the initial classification
-      additionalProperties: false
-      type: object
-      required:
-      - moderation_job_id
-      - classification_job_id
-      title: VirtualModeratorQueuedResponse
-    HTTPValidationError:
-      properties:
-        detail:
-          items:
-            $ref: '#/components/schemas/ValidationError'
-          type: array
-          title: Detail
-      type: object
-      title: HTTPValidationError
-    UserReportAttachment:
-      properties:
-        relation_to_main_media:
-          type: string
-          enum:
-          - related_link
-          - comment
-          - post
-          - chat
-          - profile
-          - post_by_same_user
-          - metadata
-          - user_report
-          title: Relation To Main Media
-          description: Defines how the attachment is related to the main media, such as being a comment, a post, or a chat
-          default: post
-        type:
-          type: string
-          enum:
-          - user_report
-          const: user_report
-          title: Type
-          default: user_report
-        value:
-          type: string
-          title: Value
-      type: object
-      required:
-      - value
-      title: UserReportAttachment
+      title: TextMainContent
     ValidationError:
       properties:
         loc:

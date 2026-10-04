@@ -63,15 +63,6 @@ components:
       - api_token
       - expiry
       title: LoginResponse
-    HTTPValidationError:
-      properties:
-        detail:
-          items:
-            $ref: '#/components/schemas/ValidationError'
-          type: array
-          title: Detail
-      type: object
-      title: HTTPValidationError
     ValidationError:
       properties:
         loc:
@@ -93,6 +84,15 @@ components:
       - msg
       - type
       title: ValidationError
+    HTTPValidationError:
+      properties:
+        detail:
+          items:
+            $ref: '#/components/schemas/ValidationError'
+          type: array
+          title: Detail
+      type: object
+      title: HTTPValidationError
     Body_authenticate_authenticate_post:
       properties:
         key:

@@ -234,6 +234,51 @@ paths:
       - JWTBearer: []
 components:
   schemas:
+    Body_image_policy_classify_classify_policy_image_post:
+      properties:
+        callback_url:
+          type: string
+          maxLength: 2083
+          minLength: 1
+          format: uri
+          title: Webhooks callback URL
+        caption:
+          type: string
+          title: Caption
+        url:
+          type: string
+          maxLength: 65536
+          minLength: 1
+          format: uri
+          title: Url
+      type: object
+      title: Body_image_policy_classify_classify_policy_image_post
+    VideoPolicyClassificationResponse:
+      properties:
+        url:
+          type: string
+          maxLength: 65536
+          minLength: 1
+          format: uri
+          title: Url
+        policy_categories:
+          anyOf:
+          - items:
+              $ref: '#/components/schemas/PolicyCategoryFull'
+            type: array
+          - items:
+              $ref: '#/components/schemas/PolicyCategoryRiskLevels'
+            type: array
+          - items:
+              $ref: '#/components/schemas/PolicyCategoryScores'
+            type: array
+          title: Policy Categories
+        metadata:
+          $ref: '#/components/schemas/VideoMetadata'
+      type: object
+      required:
+      - policy_categories
+      title: VideoPolicyClassificationResponse
     VideoMetadata:
       properties:
         width:
@@ -265,32 +310,7 @@ components:
       - duration
       - seconds_processed
       title: VideoMetadata
-    PolicyCategoryFull:
-      properties:
-        name:
-          type: string
-          title: Policy category name
-        description:
-          type: string
-          title: Policy category description
-        risk_level:
-          type: string
-          title: Policy risk level
-        score:
-          type: number
-          title: Policy classification score
-      type: object
-      required:
-      - name
-      - description
-      - risk_level
-      title: PolicyCategoryFull
-      example:
-        name: ARMS_AMMO
-        description: Arms & Ammunition
-        risk_level: high
-        score: 0.8
-    AsyncResponse_VideoPolicyClassificationResponse_:
+    AsyncResponse_PolicyClassificationResponse_:
       properties:
         status:
           allOf:
@@ -298,7 +318,7 @@ components:
           title: Status of classification job
         results:
           allOf:
-          - $ref: '#/components/schemas/VideoPolicyClassificationResponse'
+          - $ref: '#/components/schemas/PolicyClassificationResponse'
           title: Classification results
         msg:
           type: string
@@ -306,17 +326,7 @@ components:
       type: object
       required:
       - status
-      title: AsyncResponse[VideoPolicyClassificationResponse]
-    JobIDResponse:
-      properties:
-        job_id:
-          type: string
-          format: uuid4
-          title: Job Id
-      type: object
-      required:
-      - job_id
-      title: JobIDResponse
+      title: AsyncResponse[PolicyClassificationResponse]
     PolicyCategoryScores:
       properties:
         name:
@@ -337,87 +347,6 @@ components:
         name: ARMS_AMMO
         description: Arms & Ammunition
         score: 0.8
-    AsyncResponse_PolicyClassificationResponse_:
-      properties:
-        status:
-          allOf:
-          - $ref: '#/components/schemas/AsyncResponseStatus'
-          title: Status of classification job
-        results:
-          allOf:
-          - $ref: '#/components/schemas/PolicyClassificationResponse'
-          title: Classification results
-        msg:
-          type: string
-          title: Error details
-      type: object
-      required:
-      - status
-      title: AsyncResponse[PolicyClassificationResponse]
-    Body_image_classify_policy_now_classify_policy_image_now_post:
-      properties:
-        callback_url:
-          type: string
-          maxLength: 2083
-          minLength: 1
-          format: uri
-          title: Webhooks callback URL
-        caption:
-          type: string
-          title: Caption
-        url:
-          type: string
-          maxLength: 65536
-          minLength: 1
-          format: uri
-          title: Url
-      type: object
-      title: Body_image_classify_policy_now_classify_policy_image_now_post
-    Body_video_classify_policy_now_classify_policy_video_now_post:
-      properties:
-        callback_url:
-          type: string
-          maxLength: 2083
-          minLength: 1
-          format: uri
-          title: Webhooks callback URL
-        caption:
-          type: string
-          title: Caption
-        url:
-          type: string
-          maxLength: 65536
-          minLength: 1
-          format: uri
-          title: Url
-      type: object
-      title: Body_video_classify_policy_now_classify_policy_video_now_post
-    VideoPolicyClassificationResponse:
-      properties:
-        url:
-          type: string
-          maxLength: 65536
-          minLength: 1
-          format: uri
-          title: Url
-        policy_categories:
-          anyOf:
-          - items:
-              $ref: '#/components/schemas/PolicyCategoryFull'
-            type: array
-          - items:
-              $ref: '#/components/schemas/PolicyCategoryRiskLevels'
-            type: array
-          - items:
-              $ref: '#/components/schemas/PolicyCategoryScores'
-            type: array
-          title: Policy Categories
-        metadata:
-          $ref: '#/components/schemas/VideoMetadata'
-      type: object
-      required:
-      - policy_categories
-      title: VideoPolicyClassificationResponse
     AsyncResponseStatus:
       enum:
       - done
@@ -425,80 +354,6 @@ components:
       - queued
       title: AsyncResponseStatus
       description: An enumeration.
-    HTTPValidationError:
-      properties:
-        detail:
-          items:
-            $ref: '#/components/schemas/ValidationError'
-          type: array
-          title: Detail
-      type: object
-      title: HTTPValidationError
-    PolicyCategoryRiskLevels:
-      properties:
-        name:
-          type: string
-          title: Policy category name
-        description:
-          type: string
-          title: Policy category description
-        risk_level:
-          type: string
-          title: Policy risk level
-      type: object
-      required:
-      - name
-      - description
-      - risk_level
-      title: PolicyCategoryRiskLevels
-      description: "Possible categories names are:\n\n- ADULT_CONTENT: Adult & Explicit Sexual Content\n- ARMS_AMMO: Arms & Ammunition\n- CRIME_HARMFUL_ACTS: Crime & Harmful acts to individuals and Society,\n                      Human Right Violations\n- DEATH_INJURY_MILITARY: Death, Injury or Military Conflict\n- DEBATED_SENSITIVE: Debated Sensitive Social Issue\n- DRUGS_TOBACCO_ALCOHOL: Illegal Drugs/Tobacco/e-Cigarettes/Vaping/Alcohol\n- HATE_SPEECH_AGGRESSION: Hate speech & acts of aggression\n- OBSCENITY_PROFANITY: Obscenity and Profanity, including language,\n                       gestures, and explicitly gory, graphic or repulsive\n                       content intended to shock and disgust\n- PIRACY: Online piracy\n- SPAM: Spam or Harmful Content\n- TERRORISM: Terrorism\n\nFor each detected category the risk may be:\n\n- high\n- medium\n- low"
-      example:
-        name: ARMS_AMMO
-        description: Arms & Ammunition
-        risk_level: high
-    Body_image_policy_classify_classify_policy_image_post:
-      properties:
-        callback_url:
-          type: string
-          maxLength: 2083
-          minLength: 1
-          format: uri
-          title: Webhooks callback URL
-        caption:
-          type: string
-          title: Caption
-        url:
-          type: string
-          maxLength: 65536
-          minLength: 1
-          format: uri
-          title: Url
-      type: object
-      title: Body_image_policy_classify_classify_policy_image_post
-    PolicyClassificationResponse:
-      properties:
-        url:
-          type: string
-          maxLength: 65536
-          minLength: 1
-          format: uri
-          title: Url
-        policy_categories:
-          anyOf:
-          - items:
-              $ref: '#/components/schemas/PolicyCategoryFull'
-            type: array
-          - items:
-              $ref: '#/components/schemas/PolicyCategoryRiskLevels'
-            type: array
-          - items:
-              $ref: '#/components/schemas/PolicyCategoryScores'
-            type: array
-          title: Policy Categories
-      type: object
-      required:
-      - policy_categories
-      title: PolicyClassificationResponse
     Body_video_policy_classify_classify_policy_video_post:
       properties:
         callback_url:
@@ -539,6 +394,151 @@ components:
       - msg
       - type
       title: ValidationError
+    JobIDResponse:
+      properties:
+        job_id:
+          type: string
+          format: uuid4
+          title: Job Id
+      type: object
+      required:
+      - job_id
+      title: JobIDResponse
+    Body_image_classify_policy_now_classify_policy_image_now_post:
+      properties:
+        callback_url:
+          type: string
+          maxLength: 2083
+          minLength: 1
+          format: uri
+          title: Webhooks callback URL
+        caption:
+          type: string
+          title: Caption
+        url:
+          type: string
+          maxLength: 65536
+          minLength: 1
+          format: uri
+          title: Url
+      type: object
+      title: Body_image_classify_policy_now_classify_policy_image_now_post
+    HTTPValidationError:
+      properties:
+        detail:
+          items:
+            $ref: '#/components/schemas/ValidationError'
+          type: array
+          title: Detail
+      type: object
+      title: HTTPValidationError
+    PolicyClassificationResponse:
+      properties:
+        url:
+          type: string
+          maxLength: 65536
+          minLength: 1
+          format: uri
+          title: Url
+        policy_categories:
+          anyOf:
+          - items:
+              $ref: '#/components/schemas/PolicyCategoryFull'
+            type: array
+          - items:
+              $ref: '#/components/schemas/PolicyCategoryRiskLevels'
+            type: array
+          - items:
+              $ref: '#/components/schemas/PolicyCategoryScores'
+            type: array
+          title: Policy Categories
+      type: object
+      required:
+      - policy_categories
+      title: PolicyClassificationResponse
+    PolicyCategoryFull:
+      properties:
+        name:
+          type: string
+          title: Policy category name
+        description:
+          type: string
+          title: Policy category description
+        risk_level:
+          type: string
+          title: Policy risk level
+        score:
+          type: number
+          title: Policy classification score
+      type: object
+      required:
+      - name
+      - description
+      - risk_level
+      title: PolicyCategoryFull
+      example:
+        name: ARMS_AMMO
+        description: Arms & Ammunition
+        risk_level: high
+        score: 0.8
+    Body_video_classify_policy_now_classify_policy_video_now_post:
+      properties:
+        callback_url:
+          type: string
+          maxLength: 2083
+          minLength: 1
+          format: uri
+          title: Webhooks callback URL
+        caption:
+          type: string
+          title: Caption
+        url:
+          type: string
+          maxLength: 65536
+          minLength: 1
+          format: uri
+          title: Url
+      type: object
+      title: Body_video_classify_policy_now_classify_policy_video_now_post
+    AsyncResponse_VideoPolicyClassificationResponse_:
+      properties:
+        status:
+          allOf:
+          - $ref: '#/components/schemas/AsyncResponseStatus'
+          title: Status of classification job
+        results:
+          allOf:
+          - $ref: '#/components/schemas/VideoPolicyClassificationResponse'
+          title: Classification results
+        msg:
+          type: string
+          title: Error details
+      type: object
+      required:
+      - status
+      title: AsyncResponse[VideoPolicyClassificationResponse]
+    PolicyCategoryRiskLevels:
+      properties:
+        name:
+          type: string
+          title: Policy category name
+        description:
+          type: string
+          title: Policy category description
+        risk_level:
+          type: string
+          title: Policy risk level
+      type: object
+      required:
+      - name
+      - description
+      - risk_level
+      title: PolicyCategoryRiskLevels
+      description: "Possible categories names are:\n\n- ADULT_CONTENT: Adult & Explicit Sexual Content\n- ARMS_AMMO: Arms & Ammunition\n- CRIME_HARMFUL_ACTS: Crime & Harmful acts to individuals and Society,\n                      Human Right Violations\n- DEATH_INJURY_MILITARY: Death, Injury or Military Conflict\n- DEBATED_SENSITIVE: Debated Sensitive Social Issue\n- DRUGS_TOBACCO_ALCOHOL: Illegal Drugs/Tobacco/e-Cigarettes/Vaping/Alcohol\n- HATE_SPEECH_AGGRESSION: Hate speech & acts of aggression\n- OBSCENITY_PROFANITY: Obscenity and Profanity, including language,\n                       gestures, and explicitly gory, graphic or repulsive\n                       content intended to shock and disgust\n- PIRACY: Online piracy\n- SPAM: Spam or Harmful Content\n- TERRORISM: Terrorism\n\nFor each detected category the risk may be:\n\n- high\n- medium\n- low"
+      example:
+        name: ARMS_AMMO
+        description: Arms & Ammunition
+        risk_level: high
   securitySchemes:
     JWTBearer:
       type: http

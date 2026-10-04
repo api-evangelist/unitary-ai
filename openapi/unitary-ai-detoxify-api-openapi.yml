@@ -70,6 +70,61 @@ paths:
       - JWTBearer: []
 components:
   schemas:
+    AsyncResponse_DetoxifyResponse_:
+      properties:
+        status:
+          allOf:
+          - $ref: '#/components/schemas/AsyncResponseStatus'
+          title: Status of classification job
+        results:
+          allOf:
+          - $ref: '#/components/schemas/DetoxifyResponse'
+          title: Classification results
+        msg:
+          type: string
+          title: Error details
+      type: object
+      required:
+      - status
+      title: AsyncResponse[DetoxifyResponse]
+    AsyncResponseStatus:
+      enum:
+      - done
+      - failed
+      - queued
+      title: AsyncResponseStatus
+      description: An enumeration.
+    DetoxifyModel:
+      type: string
+      enum:
+      - multilingual
+      title: DetoxifyModel
+      description: An enumeration.
+    Body_text_detoxify_classify_detoxify_text__post:
+      properties:
+        callback_url:
+          type: string
+          maxLength: 2083
+          minLength: 1
+          format: uri
+          title: Webhooks callback URL
+        text:
+          type: string
+          maxLength: 262144
+          title: Text to classify (max 256kb)
+        model:
+          allOf:
+          - $ref: '#/components/schemas/DetoxifyModel'
+          title: Detoxify model type
+          default: multilingual
+        correlation_id:
+          type: string
+          maxLength: 128
+          title: An optional id chosen by the user to correlate requests and responses
+      type: object
+      required:
+      - text
+      title: Body_text_detoxify_classify_detoxify_text__post
     JobIDResponse:
       properties:
         job_id:
@@ -80,13 +135,36 @@ components:
       required:
       - job_id
       title: JobIDResponse
-    AsyncResponseStatus:
-      enum:
-      - done
-      - failed
-      - queued
-      title: AsyncResponseStatus
-      description: An enumeration.
+    HTTPValidationError:
+      properties:
+        detail:
+          items:
+            $ref: '#/components/schemas/ValidationError'
+          type: array
+          title: Detail
+      type: object
+      title: HTTPValidationError
+    ValidationError:
+      properties:
+        loc:
+          items:
+            anyOf:
+            - type: string
+            - type: integer
+          type: array
+          title: Location
+        msg:
+          type: string
+          title: Message
+        type:
+          type: string
+          title: Error Type
+      type: object
+      required:
+      - loc
+      - msg
+      - type
+      title: ValidationError
     DetoxifyResponse:
       properties:
         toxicity:
@@ -120,84 +198,6 @@ components:
       - identity_attack
       - sexual_explicit
       title: DetoxifyResponse
-    DetoxifyModel:
-      type: string
-      enum:
-      - multilingual
-      title: DetoxifyModel
-      description: An enumeration.
-    HTTPValidationError:
-      properties:
-        detail:
-          items:
-            $ref: '#/components/schemas/ValidationError'
-          type: array
-          title: Detail
-      type: object
-      title: HTTPValidationError
-    Body_text_detoxify_classify_detoxify_text__post:
-      properties:
-        callback_url:
-          type: string
-          maxLength: 2083
-          minLength: 1
-          format: uri
-          title: Webhooks callback URL
-        text:
-          type: string
-          maxLength: 262144
-          title: Text to classify (max 256kb)
-        model:
-          allOf:
-          - $ref: '#/components/schemas/DetoxifyModel'
-          title: Detoxify model type
-          default: multilingual
-        correlation_id:
-          type: string
-          maxLength: 128
-          title: An optional id chosen by the user to correlate requests and responses
-      type: object
-      required:
-      - text
-      title: Body_text_detoxify_classify_detoxify_text__post
-    ValidationError:
-      properties:
-        loc:
-          items:
-            anyOf:
-            - type: string
-            - type: integer
-          type: array
-          title: Location
-        msg:
-          type: string
-          title: Message
-        type:
-          type: string
-          title: Error Type
-      type: object
-      required:
-      - loc
-      - msg
-      - type
-      title: ValidationError
-    AsyncResponse_DetoxifyResponse_:
-      properties:
-        status:
-          allOf:
-          - $ref: '#/components/schemas/AsyncResponseStatus'
-          title: Status of classification job
-        results:
-          allOf:
-          - $ref: '#/components/schemas/DetoxifyResponse'
-          title: Classification results
-        msg:
-          type: string
-          title: Error details
-      type: object
-      required:
-      - status
-      title: AsyncResponse[DetoxifyResponse]
   securitySchemes:
     JWTBearer:
       type: http
