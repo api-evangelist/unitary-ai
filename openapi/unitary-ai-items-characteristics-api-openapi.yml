@@ -204,82 +204,7 @@ paths:
       - JWTBearer: []
 components:
   schemas:
-    FullVisualContentCategory:
-      properties:
-        artistic:
-          type: number
-          title: Artistic
-          example: 0.54324
-        comic:
-          type: number
-          title: Comic
-          example: 0.54324
-        meme:
-          type: number
-          title: Meme
-          example: 0.54324
-        screenshot:
-          type: number
-          title: Screenshot
-          example: 0.54324
-        map:
-          type: number
-          title: Map
-          example: 0.54324
-        poster_cover:
-          type: number
-          title: Poster Cover
-          example: 0.54324
-        game_screenshot:
-          type: number
-          title: Game Screenshot
-          example: 0.54324
-        face_filter:
-          type: number
-          title: Face Filter
-          example: 0.54324
-        promo_info_graphic:
-          type: number
-          title: Promo Info Graphic
-          example: 0.54324
-        photo:
-          type: number
-          title: Photo
-          example: 0.54324
-      type: object
-      required:
-      - artistic
-      - comic
-      - meme
-      - screenshot
-      - map
-      - poster_cover
-      - game_screenshot
-      - face_filter
-      - promo_info_graphic
-      - photo
-      title: FullVisualContentCategory
-    FullHateSymbols:
-      properties:
-        confederate_flag:
-          type: number
-          title: Confederate Flag
-          example: 0.54324
-        pepe_frog:
-          type: number
-          title: Pepe Frog
-          example: 0.54324
-        nazi_swastika:
-          type: number
-          title: Nazi Swastika
-          example: 0.54324
-      type: object
-      required:
-      - confederate_flag
-      - pepe_frog
-      - nazi_swastika
-      title: FullHateSymbols
-    ItemsCharacteristicsResponse:
+    VideoItemsCharacteristicsResponse:
       properties:
         violence:
           $ref: '#/components/schemas/FullViolenceCategory'
@@ -315,6 +240,8 @@ components:
           minLength: 1
           format: uri
           title: Url
+        metadata:
+          $ref: '#/components/schemas/VideoMetadata'
       type: object
       required:
       - violence
@@ -323,38 +250,7 @@ components:
       - hate_symbols
       - visual_content
       - other
-      title: ItemsCharacteristicsResponse
-    VideoMetadata:
-      properties:
-        width:
-          type: integer
-          exclusiveMinimum: 0.0
-          title: Video width (pixels)
-        height:
-          type: integer
-          exclusiveMinimum: 0.0
-          title: Video height (pixels)
-        fps:
-          type: number
-          exclusiveMinimum: 0.0
-          title: Video average framerate
-        duration:
-          type: number
-          exclusiveMinimum: 0.0
-          title: Video duration (seconds)
-        seconds_processed:
-          type: number
-          minimum: 0.0
-          title: Number of seconds processed
-          description: The number of seconds of video processed to obtain results
-      type: object
-      required:
-      - width
-      - height
-      - fps
-      - duration
-      - seconds_processed
-      title: VideoMetadata
+      title: VideoItemsCharacteristicsResponse
     FullViolenceCategory:
       properties:
         violence:
@@ -380,6 +276,138 @@ components:
       - knife
       - violent_knife
       title: FullViolenceCategory
+    AsyncResponse_VideoItemsCharacteristicsResponse_:
+      properties:
+        status:
+          allOf:
+          - $ref: '#/components/schemas/AsyncResponseStatus'
+          title: Status of classification job
+        results:
+          allOf:
+          - $ref: '#/components/schemas/VideoItemsCharacteristicsResponse'
+          title: Classification results
+        msg:
+          type: string
+          title: Error details
+      type: object
+      required:
+      - status
+      title: AsyncResponse[VideoItemsCharacteristicsResponse]
+    AsyncResponse_ItemsCharacteristicsResponse_:
+      properties:
+        status:
+          allOf:
+          - $ref: '#/components/schemas/AsyncResponseStatus'
+          title: Status of classification job
+        results:
+          allOf:
+          - $ref: '#/components/schemas/ItemsCharacteristicsResponse'
+          title: Classification results
+        msg:
+          type: string
+          title: Error details
+      type: object
+      required:
+      - status
+      title: AsyncResponse[ItemsCharacteristicsResponse]
+    Body_video_items_characteristics_classify_classify_items_characteristics_video_post:
+      properties:
+        callback_url:
+          type: string
+          maxLength: 2083
+          minLength: 1
+          format: uri
+          title: Webhooks callback URL
+        caption:
+          type: string
+          title: Caption
+        file:
+          type: string
+          format: binary
+          title: File
+        url:
+          type: string
+          maxLength: 65536
+          minLength: 1
+          format: uri
+          title: Url
+      type: object
+      title: Body_video_items_characteristics_classify_classify_items_characteristics_video_post
+    LanguageToxicityCategory:
+      properties:
+        toxicity:
+          type: number
+          title: Toxicity
+          example: 0.54324
+        severe_toxicity:
+          type: number
+          title: Severe Toxicity
+          example: 0.54324
+        obscene:
+          type: number
+          title: Obscene
+          example: 0.54324
+        insult:
+          type: number
+          title: Insult
+          example: 0.54324
+        identity_attack:
+          type: number
+          title: Identity Attack
+          example: 0.54324
+        threat:
+          type: number
+          title: Threat
+          example: 0.54324
+        sexual_explicit:
+          type: number
+          title: Sexual Explicit
+          example: 0.54324
+      type: object
+      required:
+      - toxicity
+      - severe_toxicity
+      - obscene
+      - insult
+      - identity_attack
+      - threat
+      - sexual_explicit
+      title: LanguageToxicityCategory
+    FullSubstancesCategory:
+      properties:
+        alcohol:
+          type: number
+          title: Alcohol
+          example: 0.54324
+        drink:
+          type: number
+          title: Drink
+          example: 0.54324
+        smoking_and_tobacco:
+          type: number
+          title: Smoking And Tobacco
+          example: 0.54324
+        marijuana:
+          type: number
+          title: Marijuana
+          example: 0.54324
+        pills:
+          type: number
+          title: Pills
+          example: 0.54324
+        recreational_pills:
+          type: number
+          title: Recreational Pills
+          example: 0.54324
+      type: object
+      required:
+      - alcohol
+      - drink
+      - smoking_and_tobacco
+      - marijuana
+      - pills
+      - recreational_pills
+      title: FullSubstancesCategory
     AsyncResponseStatus:
       enum:
       - done
@@ -387,6 +415,27 @@ components:
       - queued
       title: AsyncResponseStatus
       description: An enumeration.
+    ValidationError:
+      properties:
+        loc:
+          items:
+            anyOf:
+            - type: string
+            - type: integer
+          type: array
+          title: Location
+        msg:
+          type: string
+          title: Message
+        type:
+          type: string
+          title: Error Type
+      type: object
+      required:
+      - loc
+      - msg
+      - type
+      title: ValidationError
     FullNSFWCategory:
       properties:
         adult_content:
@@ -470,7 +519,17 @@ components:
       - adult_content
       - suggestive
       title: FullNSFWCategory
-    Body_video_items_characteristics_classify_classify_items_characteristics_video_post:
+    JobIDResponse:
+      properties:
+        job_id:
+          type: string
+          format: uuid4
+          title: Job Id
+      type: object
+      required:
+      - job_id
+      title: JobIDResponse
+    Body_image_items_characteristics_classify_classify_items_characteristics_image_post:
       properties:
         callback_url:
           type: string
@@ -492,34 +551,122 @@ components:
           format: uri
           title: Url
       type: object
-      title: Body_video_items_characteristics_classify_classify_items_characteristics_video_post
-    AsyncResponse_ItemsCharacteristicsResponse_:
+      title: Body_image_items_characteristics_classify_classify_items_characteristics_image_post
+    FullVisualContentCategory:
       properties:
-        status:
-          allOf:
-          - $ref: '#/components/schemas/AsyncResponseStatus'
-          title: Status of classification job
-        results:
-          allOf:
-          - $ref: '#/components/schemas/ItemsCharacteristicsResponse'
-          title: Classification results
-        msg:
-          type: string
-          title: Error details
+        artistic:
+          type: number
+          title: Artistic
+          example: 0.54324
+        comic:
+          type: number
+          title: Comic
+          example: 0.54324
+        meme:
+          type: number
+          title: Meme
+          example: 0.54324
+        screenshot:
+          type: number
+          title: Screenshot
+          example: 0.54324
+        map:
+          type: number
+          title: Map
+          example: 0.54324
+        poster_cover:
+          type: number
+          title: Poster Cover
+          example: 0.54324
+        game_screenshot:
+          type: number
+          title: Game Screenshot
+          example: 0.54324
+        face_filter:
+          type: number
+          title: Face Filter
+          example: 0.54324
+        promo_info_graphic:
+          type: number
+          title: Promo Info Graphic
+          example: 0.54324
+        photo:
+          type: number
+          title: Photo
+          example: 0.54324
       type: object
       required:
-      - status
-      title: AsyncResponse[ItemsCharacteristicsResponse]
-    JobIDResponse:
+      - artistic
+      - comic
+      - meme
+      - screenshot
+      - map
+      - poster_cover
+      - game_screenshot
+      - face_filter
+      - promo_info_graphic
+      - photo
+      title: FullVisualContentCategory
+    FullHateSymbols:
       properties:
-        job_id:
-          type: string
-          format: uuid4
-          title: Job Id
+        confederate_flag:
+          type: number
+          title: Confederate Flag
+          example: 0.54324
+        pepe_frog:
+          type: number
+          title: Pepe Frog
+          example: 0.54324
+        nazi_swastika:
+          type: number
+          title: Nazi Swastika
+          example: 0.54324
       type: object
       required:
-      - job_id
-      title: JobIDResponse
+      - confederate_flag
+      - pepe_frog
+      - nazi_swastika
+      title: FullHateSymbols
+    HTTPValidationError:
+      properties:
+        detail:
+          items:
+            $ref: '#/components/schemas/ValidationError'
+          type: array
+          title: Detail
+      type: object
+      title: HTTPValidationError
+    VideoMetadata:
+      properties:
+        width:
+          type: integer
+          exclusiveMinimum: 0.0
+          title: Video width (pixels)
+        height:
+          type: integer
+          exclusiveMinimum: 0.0
+          title: Video height (pixels)
+        fps:
+          type: number
+          exclusiveMinimum: 0.0
+          title: Video average framerate
+        duration:
+          type: number
+          exclusiveMinimum: 0.0
+          title: Video duration (seconds)
+        seconds_processed:
+          type: number
+          minimum: 0.0
+          title: Number of seconds processed
+          description: The number of seconds of video processed to obtain results
+      type: object
+      required:
+      - width
+      - height
+      - fps
+      - duration
+      - seconds_processed
+      title: VideoMetadata
     FullOtherCategory:
       properties:
         child:
@@ -553,16 +700,7 @@ components:
       - toy
       - gambling_machine
       title: FullOtherCategory
-    HTTPValidationError:
-      properties:
-        detail:
-          items:
-            $ref: '#/components/schemas/ValidationError'
-          type: array
-          title: Detail
-      type: object
-      title: HTTPValidationError
-    VideoItemsCharacteristicsResponse:
+    ItemsCharacteristicsResponse:
       properties:
         violence:
           $ref: '#/components/schemas/FullViolenceCategory'
@@ -598,8 +736,6 @@ components:
           minLength: 1
           format: uri
           title: Url
-        metadata:
-          $ref: '#/components/schemas/VideoMetadata'
       type: object
       required:
       - violence
@@ -608,143 +744,7 @@ components:
       - hate_symbols
       - visual_content
       - other
-      title: VideoItemsCharacteristicsResponse
-    AsyncResponse_VideoItemsCharacteristicsResponse_:
-      properties:
-        status:
-          allOf:
-          - $ref: '#/components/schemas/AsyncResponseStatus'
-          title: Status of classification job
-        results:
-          allOf:
-          - $ref: '#/components/schemas/VideoItemsCharacteristicsResponse'
-          title: Classification results
-        msg:
-          type: string
-          title: Error details
-      type: object
-      required:
-      - status
-      title: AsyncResponse[VideoItemsCharacteristicsResponse]
-    LanguageToxicityCategory:
-      properties:
-        toxicity:
-          type: number
-          title: Toxicity
-          example: 0.54324
-        severe_toxicity:
-          type: number
-          title: Severe Toxicity
-          example: 0.54324
-        obscene:
-          type: number
-          title: Obscene
-          example: 0.54324
-        insult:
-          type: number
-          title: Insult
-          example: 0.54324
-        identity_attack:
-          type: number
-          title: Identity Attack
-          example: 0.54324
-        threat:
-          type: number
-          title: Threat
-          example: 0.54324
-        sexual_explicit:
-          type: number
-          title: Sexual Explicit
-          example: 0.54324
-      type: object
-      required:
-      - toxicity
-      - severe_toxicity
-      - obscene
-      - insult
-      - identity_attack
-      - threat
-      - sexual_explicit
-      title: LanguageToxicityCategory
-    Body_image_items_characteristics_classify_classify_items_characteristics_image_post:
-      properties:
-        callback_url:
-          type: string
-          maxLength: 2083
-          minLength: 1
-          format: uri
-          title: Webhooks callback URL
-        caption:
-          type: string
-          title: Caption
-        file:
-          type: string
-          format: binary
-          title: File
-        url:
-          type: string
-          maxLength: 65536
-          minLength: 1
-          format: uri
-          title: Url
-      type: object
-      title: Body_image_items_characteristics_classify_classify_items_characteristics_image_post
-    ValidationError:
-      properties:
-        loc:
-          items:
-            anyOf:
-            - type: string
-            - type: integer
-          type: array
-          title: Location
-        msg:
-          type: string
-          title: Message
-        type:
-          type: string
-          title: Error Type
-      type: object
-      required:
-      - loc
-      - msg
-      - type
-      title: ValidationError
-    FullSubstancesCategory:
-      properties:
-        alcohol:
-          type: number
-          title: Alcohol
-          example: 0.54324
-        drink:
-          type: number
-          title: Drink
-          example: 0.54324
-        smoking_and_tobacco:
-          type: number
-          title: Smoking And Tobacco
-          example: 0.54324
-        marijuana:
-          type: number
-          title: Marijuana
-          example: 0.54324
-        pills:
-          type: number
-          title: Pills
-          example: 0.54324
-        recreational_pills:
-          type: number
-          title: Recreational Pills
-          example: 0.54324
-      type: object
-      required:
-      - alcohol
-      - drink
-      - smoking_and_tobacco
-      - marijuana
-      - pills
-      - recreational_pills
-      title: FullSubstancesCategory
+      title: ItemsCharacteristicsResponse
   securitySchemes:
     JWTBearer:
       type: http

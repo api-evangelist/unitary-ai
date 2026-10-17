@@ -63,6 +63,17 @@ components:
       - api_token
       - expiry
       title: LoginResponse
+    Body_authenticate_authenticate_post:
+      properties:
+        key:
+          type: string
+          format: password
+          title: Key
+          writeOnly: true
+      type: object
+      required:
+      - key
+      title: Body_authenticate_authenticate_post
     ValidationError:
       properties:
         loc:
@@ -93,17 +104,6 @@ components:
           title: Detail
       type: object
       title: HTTPValidationError
-    Body_authenticate_authenticate_post:
-      properties:
-        key:
-          type: string
-          format: password
-          title: Key
-          writeOnly: true
-      type: object
-      required:
-      - key
-      title: Body_authenticate_authenticate_post
   securitySchemes:
     JWTBearer:
       type: http
